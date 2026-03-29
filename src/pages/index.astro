@@ -1,0 +1,12 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import LangSwitcher from '../components/action/LangSwitcher';
+
+const supportedLanguages = ['en', 'de'];
+---
+
+<Layout title="AgileByte OÜ" description="">
+  <LangSwitcher client:load supportedLanguages={supportedLanguages} defaultLang="en" />
+</Layout>

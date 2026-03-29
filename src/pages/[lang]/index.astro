@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import FolderList from '../../components/FolderList.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const supportedLanguages = ['en'];
+  
+  return supportedLanguages.map(lang => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+
+const allContent = await getCollection('landingpage');
+
+const langContent = allContent.filter(post => post.id.startsWith(`${lang}/root/`));
+
+const mainSubfolders = [...new Set(
+  langContent.map(post => {
+    const folderPart = post.id.split('/')[1] + '/' + post.id.split('/')[2];
+    return folderPart;
+  })
+)];
+
+interface Section {
+  folder: string;
+  order: number;
+  component: 'hero' | 'carousel' | 'grid';
+  title: string;
+}
+
+const sections: Section[] = mainSubfolders.map(folder => {
+  const folderParts = folder.split('/')[1].split('_');
+  const order = parseInt(folderParts[0], 10);
+  const componentMatch = folderParts[folderParts.length - 1].match(/^(hero|carousel|grid)$/);
+  const component = componentMatch ? componentMatch[0] as 'hero' | 'carousel' | 'grid' : 'carousel';
+  const sectionName = folderParts.slice(1, -1).join(' ').replace(/([A-Z])/g, ' $1').trim();
+  const title = sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
+  
+  return {
+    folder,
+    order,
+    component,
+    title,
+  };
+});
+
+sections.sort((a, b) => a.order - b.order);
+---
+
+<Layout title="AgileByte OÜ" description="">
+
+  {sections.map((section, index) => (
+    <section>
+      {index === 0 ? "" : <h2>{section.title}</h2>}
+      <FolderList lang={lang} path={`${lang}/${section.folder}/`} component={section.component} />
+    </section>
+  ))}
+</Layout>

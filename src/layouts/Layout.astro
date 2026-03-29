@@ -1,0 +1,229 @@
+---
+import '../styles/global.css';
+import LangSwitcher from '../components/action/LangSwitcher';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Landingpage",
+  description = "A minimalistic landing page"
+} = Astro.props;
+
+const primaryColor = import.meta.env.PRIMARY_COLOR || "#2563eb";
+const secondaryColor = import.meta.env.SECONDARY_COLOR || "#1e293b";
+const accentColor = import.meta.env.ACCENT_COLOR || "#f59e0b";
+const backgroundColor = import.meta.env.BACKGROUND_COLOR || "#f8fafc";
+
+const borderWidth = import.meta.env.BORDER_WIDTH || "2px";
+const borderRadius = import.meta.env.BORDER_RADIUS || "8px";
+const boxShadow = import.meta.env.BOX_SHADOW || "0 1px 3px rgba(0,0,0,0.1)";
+
+const supportedLanguages = ['en', 'de'];
+const currentPath = Astro.url.pathname;
+const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
+const currentLang = langMatch ? langMatch[1] : null;
+
+const allContent = await getCollection('landingpage');
+const documents = allContent
+  .filter(post => post.id.startsWith('en/documents/'))
+  .map(post => {
+    const parts = post.id.split('/');
+    const fileName = parts[2].replace(/\.md$/, '');
+    const folderName = parts[1];
+    return {
+      title: post.data.title,
+      href: `/${parts[0]}/${folderName}/${fileName}`
+    };
+  });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/" class="logo">Logo</a>
+        <ul class="nav-links">
+          {currentLang && (
+            <li>
+              <LangSwitcher 
+                client:load 
+                supportedLanguages={supportedLanguages} 
+              />
+            </li>
+          )}
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <nav class="footer-nav">
+          {documents.map(doc => (
+            <a href={doc.href}>{doc.title}</a>
+          ))}
+        </nav>
+        <p>&copy; {new Date().getFullYear()} Company Name. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style define:vars={{ primaryColor, secondaryColor, accentColor, backgroundColor, borderWidth, borderRadius, boxShadow }}>
+  :root {
+    --primary: var(--primaryColor);
+    --secondary: var(--secondaryColor);
+    --accent: var(--accentColor);
+    --background: var(--backgroundColor);
+    --border-width: var(--borderWidth);
+    --border-radius: var(--borderRadius);
+    --box-shadow: var(--boxShadow);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--secondary);
+    background-color: var(--background);
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+  }
+
+  .nav-links a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    color: var(--primary);
+  }
+
+  main {
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  footer {
+    background-color: var(--secondary);
+    color: white;
+    padding: 1.5rem;
+    margin-top: auto;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-nav a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer-nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    nav {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .nav-links {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    main {
+      padding: 1rem;
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

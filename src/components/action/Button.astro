@@ -1,0 +1,82 @@
+---
+interface Props {
+  label: string;
+  style?: 'default' | 'outline';
+  type?: 'button' | 'link';
+  href?: string;
+  onClick?: string;
+  class?: string;
+}
+
+const {
+  label,
+  style = 'default',
+  type = 'button',
+  href = '#',
+  onClick,
+  class: className,
+} = Astro.props;
+
+const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
+const borderRadius = import.meta.env.BORDER_RADIUS || '6px';
+---
+
+{type === 'link' ? (
+  <a
+    href={href}
+    target={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? '_blank' : undefined) : undefined}
+    rel={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? 'noopener noreferrer' : undefined) : undefined}
+    class:list={['btn', `btn-${style}`, className]}
+  >
+    {label}
+    <slot name="icon" />
+  </a>
+) : (
+  <button
+    type="button"
+    onclick={onClick}
+    class:list={['btn', `btn-${style}`, className]}
+  >
+    {label}
+    <slot name="icon" />
+  </button>
+)}
+
+<style define:vars={{ borderWidth, borderRadius }}>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5625rem 1.125rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--borderRadius);
+    border: var(--borderWidth) solid var(--primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+  }
+
+  .btn-default {
+    background-color: var(--primary);
+    color: var(--background);
+    border-color: var(--primary);
+  }
+
+  .btn-default:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background-color: var(--background);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .btn-outline:hover {
+    background-color: var(--primary);
+    color: var(--background);
+  }
+</style>

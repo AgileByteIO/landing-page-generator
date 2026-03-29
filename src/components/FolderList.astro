@@ -1,0 +1,74 @@
+---
+import { getCollection } from 'astro:content';
+import Hero from './ui/Hero';
+import Carousel from './ui/Carousel';
+import Grid from './ui/Grid.astro';
+
+interface Props {
+  lang: string;
+  path: string;
+  component?: 'hero' | 'carousel' | 'grid';
+}
+
+const { lang, path, component } = Astro.props;
+
+const allPosts = await getCollection('landingpage');
+const normalizedFolder = path.replace(/^\//, '').replace(/\/$/, '');
+
+const filteredPosts = allPosts.filter((post) => {
+  return post.id.startsWith(normalizedFolder) && post.id !== normalizedFolder;
+});
+
+const items = filteredPosts.map((post) => {
+  const postParts = post.id.split('/');
+  const rootFolder = postParts[1];
+  const folderName = postParts[2];
+  const fileName = postParts[3].replace(/\.md$/, '');
+  const folderParts = folderName.split('_');
+  const sectionName = folderParts.slice(1, -1).join('-');
+  
+  const basePath = rootFolder === 'root' ? '' : `/${rootFolder}`;
+  const sectionPath = sectionName ? `/${sectionName}` : '';
+  const href = `/${lang}${basePath}${sectionPath}/${fileName}`;
+  
+  return {
+    title: post.data.title,
+    description: post.data.description || '',
+    author: post.data.author || '',
+    href,
+  };
+});
+
+const useComponent = component || (items.length === 1 ? 'hero' : 'carousel');
+
+const pathParts = path.replace(/^\//, '').replace(/\/$/, '').split('/');
+const rootFolder = pathParts[1];
+const folderName = pathParts[2];
+const folderParts = folderName?.split('_') || [];
+const sectionName = folderParts.slice(1, -1).join('-');
+const basePath = rootFolder === 'root' ? '' : `/${rootFolder}`;
+const sectionPath = sectionName ? `/${sectionName}` : '';
+const indexHref = `/${lang}${basePath}${sectionPath}`;
+
+const heroHref = items.length === 1 ? indexHref : items[0]?.href;
+---
+
+{items.length === 0 && <p>No content found</p>}
+
+{(useComponent === 'hero' || items.length === 1) && items.length > 0 && (
+  <Hero 
+    client:load 
+    title={items[0].title} 
+    description={items[0].description} 
+    author={items[0].author} 
+    href={heroHref} 
+  />
+)}
+
+{useComponent === 'carousel' && items.length > 1 && (
+  <Carousel client:load items={items} />
+)}
+
+{useComponent === 'grid' && items.length > 1 && (
+  <Grid items={items} />
+)}

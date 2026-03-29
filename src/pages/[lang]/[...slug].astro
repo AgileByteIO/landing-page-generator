@@ -1,0 +1,72 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/action/Button.astro';
+import FeatherIcon from '../../components/ui/FeatherIcon.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('landingpage');
+  
+  const filteredPosts = posts.filter(p => p.id.includes('/'));
+  
+  const folderGroups = new Map();
+  filteredPosts.forEach((post) => {
+    const parts = post.id.split('/');
+    const folderKey = `${parts[0]}/${parts[1]}/${parts[2]}`;
+    if (!folderGroups.has(folderKey)) {
+      folderGroups.set(folderKey, []);
+    }
+    folderGroups.get(folderKey).push(post);
+  });
+  
+  const paths = [];
+  
+  folderGroups.forEach((folderPosts, folderKey) => {
+    const [lang, rootFolder, folderName] = folderKey.split('/');
+    const isRoot = rootFolder === 'root';
+    
+    if (isRoot) {
+      const folderParts = folderName.split('_');
+      const sectionName = folderParts.slice(1, -1).join('-');
+      
+      if (folderPosts.length === 1) {
+        paths.push({ params: { lang, slug: sectionName ? `/${sectionName}` : '/' }, props: { post: folderPosts[0] } });
+      } else {
+        paths.push({ params: { lang, slug: sectionName ? `/${sectionName}` : '/' }, props: { post: folderPosts[0] } });
+        folderPosts.forEach((post) => {
+          const fileName = post.id.split('/')[3].replace(/\.md$/, '');
+          const fileParts = fileName.split('_');
+          const itemSlug = fileParts[fileParts.length - 1];
+          paths.push({ params: { lang, slug: `/${sectionName}/${itemSlug}` }, props: { post } });
+        });
+      }
+    } else {
+      folderPosts.forEach((post) => {
+        const fileName = post.id.split('/')[2].replace(/\.md$/, '');
+        paths.push({ params: { lang, slug: `/${rootFolder}/${fileName}` }, props: { post } });
+      });
+    }
+  });
+  
+  return paths;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { lang } = Astro.params;
+const backUrl = `/${lang}`;
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <nav>
+    <Button type="link" style="outline" href={backUrl}>
+      Back to Landingpage
+      <FeatherIcon name="arrow-left" size={14} slot="icon" />
+    </Button>
+  </nav>
+  <article>
+    <Content />
+  </article>
+</Layout>

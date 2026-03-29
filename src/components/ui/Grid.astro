@@ -1,0 +1,46 @@
+---
+interface GridItem {
+  title: string;
+  description?: string;
+  author?: string;
+  href: string;
+}
+
+interface Props {
+  items: GridItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="grid">
+  {items.map((item) => (
+    <a href={item.href} class="card-wrapper">
+      <div class="card">
+        <h3>{item.title}</h3>
+        {item.description && <p>{item.description}</p>}
+        {item.author && <small>By {item.author}</small>}
+      </div>
+    </a>
+  ))}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
