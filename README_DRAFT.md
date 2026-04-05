@@ -112,14 +112,16 @@ The project supports multiple languages through:
 3. Content loaded per language from markdown files
 4. Default language configurable in `src/pages/index.astro`
 
-## 🧪 Testing
+## 🧪 Testing & TDD Recommendations
 
-For Test-Driven Development, the project is set up for:
-- **Unit Testing**: Vitest with React Testing Library
-- **End-to-End Testing**: Playwright
-- **Content Validation**: Test markdown frontmatter using Astro's content collection schemas
+For Test-Driven Development with this Astro/React project, I recommend:
 
-Recommended test scripts in package.json:
+### 1. Unit Testing with Vitest
+```bash
+npm install -D vitest @vitest/coverage-v8 happy-dom @testing-library/react @testing-library/jest-dom
+```
+
+Add to `package.json`:
 ```json
 {
   "scripts": {
@@ -129,6 +131,35 @@ Recommended test scripts in package.json:
   }
 }
 ```
+
+### 2. Component Testing Examples
+Create `src/components/__tests__/` directory:
+
+```typescript
+// Hero.test.tsx
+import { render, screen } from '@testing-library/react';
+import Hero from '../Hero';
+
+describe('Hero Component', () => {
+  test('renders title and description', () => {
+    render(<Hero title="Test" description="Test description" />);
+    expect(screen.getByText('Test')).toBeInTheDocument();
+    expect(screen.getByText('Test description')).toBeInTheDocument();
+  });
+});
+```
+
+### 3. End-to-End Testing with Playwright
+```bash
+npm install -D @playwright/test
+npx playwright install
+```
+
+### 4. Visual Regression Testing
+Consider Chromatic or Percy for visual testing of UI components.
+
+### 5. Content Validation
+Test markdown frontmatter validation using Astro's content collection schemas.
 
 ## 🔧 Configuration
 
