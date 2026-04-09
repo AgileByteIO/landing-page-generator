@@ -1,0 +1,388 @@
+---
+// Hero.astro - Simplified hero component without shader logic
+// Uses global styling from CSS variables
+// Configurable alignment: left, center, right
+// Background options: gradient or image
+// Limited configuration set for simplicity
+
+interface Props {
+  title: string;
+  description?: string;
+  author?: string;
+  href: string;
+  // Layout: stacked (vertical) or side-by-side (horizontal)
+  layout?: 'stacked' | 'side-by-side';
+  // Text alignment: left, center, or right
+  alignment?: 'left' | 'center' | 'right';
+  // CTA button variant
+  ctaVariant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  // Whether to show author line
+  showAuthor?: boolean;
+  // Max lines for description before truncation
+  descriptionMaxLines?: number;
+  // Height behavior: full-screen, fixed, or auto
+  height?: 'full-screen' | 'fixed' | 'auto';
+  // Fixed height in pixels when height='fixed'
+  minHeight?: number;
+  // Background type: gradient or image (shader removed)
+  backgroundType?: 'gradient' | 'image';
+  // Gradient color stops (CSS gradient format) when backgroundType='gradient'
+  gradientColors?: string[];
+  // Image URL when backgroundType='image'
+  imageSrc?: string;
+  // Shape dividers: top and bottom
+  shapeDividerTop?: boolean | 'wave' | 'curve' | 'angle';
+  shapeDividerBottom?: boolean | 'wave' | 'curve' | 'angle';
+  // Social proof badge
+  socialProof?: { label: string; count: number };
+}
+
+// Default values
+const {
+  title,
+  description,
+  author,
+  href,
+  layout = 'stacked',
+  alignment = 'left',
+  ctaVariant = 'primary',
+  showAuthor = true,
+  descriptionMaxLines = 3,
+  height = 'full-screen',
+  minHeight = 600,
+  backgroundType = 'gradient',
+  gradientColors = ['var(--primary)', 'var(--secondary)'],
+  imageSrc,
+  shapeDividerTop = false,
+  shapeDividerBottom = false,
+  socialProof
+} = Astro.props;
+
+// Helper function to get CTA class based on variant
+function getCtaClass(variant: string): string {
+  const base = 'hero-link';
+  switch (variant) {
+    case 'primary': return `${base} hero-link-primary`;
+    case 'secondary': return `${base} hero-link-secondary`;
+    case 'outline': return `${base} hero-link-outline`;
+    case 'ghost': return `${base} hero-link-ghost`;
+    default: return base;
+  }
+}
+
+// Helper function to get background style
+function getBackgroundStyle(): string {
+  switch (backgroundType) {
+    case 'gradient':
+      return `background: linear-gradient(135deg, ${gradientColors.join(', ')})`;
+    case 'image':
+      if (imageSrc) {
+        return `
+          background-image: url(${imageSrc});
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        `;
+      }
+      return 'background-color: var(--background)';
+    default:
+      return 'background-color: var(--background)';
+  }
+}
+
+// Helper function to get container height style
+function getHeightStyle(): string {
+  switch (height) {
+    case 'full-screen':
+      return 'height: 100vh; min-height: 400px;';
+    case 'fixed':
+      return `height: ${minHeight}px;`;
+    case 'auto':
+      return `min-height: ${minHeight}px;`;
+    default:
+      return `min-height: ${minHeight}px;`;
+  }
+}
+
+// Helper function to get text alignment style
+function getTextAlignStyle(): string {
+  switch (alignment) {
+    case 'left': return 'text-align: left;';
+    case 'center': return 'text-align: center;';
+    case 'right': return 'text-align: right;';
+    default: return 'text-align: left;';
+  }
+}
+
+// Helper function to get layout flex direction
+function getLayoutStyle(): string {
+  return layout === 'side-by-side' 
+    ? 'display: flex; flex-direction: row; gap: 4rem; align-items: center;'
+    : 'display: flex; flex-direction: column; gap: 0; align-items: flex-start;';
+}
+---
+
+<!-- Hero Section -->
+<section 
+  class="hero"
+  style:{
+    `
+      ${getHeightStyle()}
+      ${getBackgroundStyle()}
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    `
+  }
+>
+  {/* Optional shape dividers would go here if needed */}
+  
+  <div 
+    class="hero-content"
+    style:{
+      `
+        position: relative;
+        z-index: 3;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        ${getLayoutStyle()}
+        color: var(--text-primary);
+      `
+    }
+  >
+    {/* Content column */}
+    <div style="flex: 1; min-width: 0;">
+      {socialProof && (
+        <div class="hero-social-proof" style="
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: var(--secondary);
+          margin-bottom: 1rem;
+        ">
+          <span>{socialProof.label}</span>
+          <span>{socialProof.count.toLocaleString()}</span>
+        </div>
+      )}
+      
+      <h1 
+        class="hero-title"
+        style:{
+          `
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--primary);
+            font-weight: 700;
+          `
+        }
+      >
+        {title}
+      </h1>
+      
+      {description && (
+        <p 
+          class="hero-description"
+          style:{
+            `
+              margin-bottom: ${showAuthor && author ? '1.5rem' : '2rem'};
+              line-height: 1.6;
+              color: var(--secondary);
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: ${descriptionMaxLines};
+            `
+          }
+        >
+          {description}
+        </p>
+      )}
+      
+      {showAuthor && author && (
+        <p class="hero-author" style="
+          font-size: 0.875rem;
+          font-style: italic;
+          color: var(--accent);
+          margin-bottom: 2rem;
+        ">
+          By {author}
+        </p>
+      )}
+      
+      <a 
+        href={href}
+        class={getCtaClass(ctaVariant)}
+        style:{
+          `
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+          `
+        }
+      >
+        Read more
+      </a>
+    </div>
+    
+    {/* Image column for side-by-side layout */}
+    {layout === 'side-by-side' && imageSrc && (
+      <div 
+        style:{
+          `
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `
+        }
+      >
+        <img 
+          src={imageSrc} 
+          alt={`${title} illustration`}
+          style:{
+            `
+              max-width: 100%;
+              height: auto;
+              border-radius: 0.5rem;
+              box-shadow: var(--box-shadow, 0 4px 6px rgba(0,0,0,0.1));
+            `
+          }
+        />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  /* Global hero styles - these use CSS variables from global.css */
+  .hero-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--background);
+    text-decoration: none;
+    border-radius: 6px;
+    border: 2px solid var(--primary);
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .hero-link:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+  
+  .hero-link-primary {
+    background-color: var(--primary);
+    color: var(--background);
+    border-color: var(--primary);
+  }
+  
+  .hero-link-primary:hover {
+    background-color: var(--background);
+    color: var(--primary);
+  }
+  
+  .hero-link-secondary {
+    background-color: var(--secondary);
+    color: var(--background);
+    border-color: var(--secondary);
+  }
+  
+  .hero-link-secondary:hover {
+    background-color: var(--background);
+    color: var(--secondary);
+  }
+  
+  .hero-link-outline {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+  }
+  
+  .hero-link-outline:hover {
+    background-color: var(--primary);
+    color: var(--background);
+  }
+  
+  .hero-link-ghost {
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  
+  .hero-link-ghost:hover {
+    background-color: var(--primary);
+    color: var(--background);
+    border-color: transparent;
+  }
+  
+  .hero-social-proof {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+  }
+  
+  .hero-title {
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  
+  .hero-description {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .hero-author {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--accent);
+  }
+  
+  /* Responsive adjustments */
+  @media (min-width: 640px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 3rem;
+    }
+    
+    .hero-description {
+      font-size: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .hero-content {
+      padding: 1.5rem;
+      flex-direction: column !important;
+      gap: 2rem !important;
+      text-align: center;
+    }
+    
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .hero-description {
+      font-size: 1rem;
+    }
+  }
+</style>
