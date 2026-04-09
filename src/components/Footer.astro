@@ -1,0 +1,96 @@
+---
+// Footer.astro
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Landingpage",
+  description = "A minimalistic landing page"
+} = Astro.props;
+
+const primaryColor = import.meta.env.PRIMARY_COLOR || "#2563eb";
+const secondaryColor = import.meta.env.SECONDARY_COLOR || "#1e293b";
+const accentColor = import.meta.env.ACCENT_COLOR || "#f59e0b";
+const backgroundColor = import.meta.env.BACKGROUND_COLOR || "#f8fafc";
+
+const allContent = await getCollection('landingpage');
+const documents = allContent
+  .filter(post => post.id.startsWith('en/documents/'))
+  .map(post => {
+    const parts = post.id.split('/');
+    const fileName = parts[2].replace(/\.md$/, '');
+    const folderName = parts[1];
+    return {
+      title: post.data.title,
+      href: `/${parts[0]}/${folderName}/${fileName}`
+    };
+  });
+---
+<footer class="footer">
+  <div class="footer-content">
+    <nav class="footer-nav">
+      {documents.map(doc => (
+        <a key={doc.href} href={doc.href}>{doc.title}</a>
+      ))}
+    </nav>
+    <p>&copy; {new Date().getFullYear()} Company Name. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  /* Footer styling */
+  .footer {
+    background-color: var(--secondary);
+    color: white;
+    padding: 2rem 1rem;
+    margin-top: auto;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .footer-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .footer-nav a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  .footer-nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+  
+  .footer p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .footer-nav {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .footer-content {
+      padding: 0 1rem;
+    }
+  }
+</style>
