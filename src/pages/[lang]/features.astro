@@ -1,0 +1,89 @@
+---
+import FeatureCard from '@/components/ui/FeatureCard.astro';
+---
+<main>
+  <h1 class="mb-6 text-2xl font-bold">Features</h1>
+  
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {/* Example 1: Primary variant with custom colors */}
+    <FeatureCard
+      title="Fast Performance"
+      description="Experience lightning-fast load times and smooth interactions"
+      icon="Zap"
+      variant="primary"
+      bgColor="var(--primary)"
+      textColor="var(--background)"
+      hoverBgColor="var(--primary)/90"
+    />
+    
+    {/* Example 2: Outline variant with custom border */}
+    <FeatureCard
+      title="Easy Customization"
+      description="Modify colors, sizes, and layouts with intuitive props"
+      icon="Settings"
+      variant="outline"
+      borderColor="var(--secondary)"
+      hoverBgColor="var(--secondary)/5"
+    />
+    
+    {/* Example 3: Ghost variant with centered text */}
+    <FeatureCard
+      title="Responsive Design"
+      description="Looks great on all devices from mobile to desktop"
+      icon="Monitor"
+      variant="ghost"
+      centered
+      textColor="var(--accent)"
+      hoverBgColor="var(--accent)/5"
+    />
+    
+    {/* Example 4: Secondary variant with custom size */}
+    <FeatureCard
+      title="SEO Optimized"
+      description="Built with search engines in mind for better visibility"
+      icon="Search"
+      variant="secondary"
+      size="lg"
+      bgColor="var(--secondary)"
+      textColor="var(--background)"
+    />
+    
+    {/* Example 5: Custom animated card */}
+    <FeatureCard
+      title="Interactive Elements"
+      description="Engaging hover effects and micro-interactions"
+      icon="Activity"
+      variant="primary"
+      animateOnHover
+      bgColor="var(--background)"
+      textColor="var(--primary)"
+      borderColor="var(--primary)"
+      hoverBgColor="var(--primary)/10"
+    />
+    
+    {/* Example 6: Link card */}
+    <FeatureCard
+      title="Documentation"
+      description="Comprehensive guides and API reference"
+      icon="BookOpen"
+      variant="outline"
+      href="/docs"
+      bgColor="var(--background)"
+      textColor="var(--primary)"
+      borderColor="var(--primary)"
+    />
+  </div>
+</main>
+
+<style>
+  /* Page-specific styles */
+  :scope {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    color: var(--primary);
+  }
+</style>

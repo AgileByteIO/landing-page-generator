@@ -113,7 +113,6 @@ function getLayoutClass(): string {
     : 'hero-layout-stacked';
 }
 ---
-
 <!-- Hero Section -->
 <section 
   class={`hero ${getHeightClass()} ${getBackgroundClass()}`}
@@ -122,20 +121,15 @@ function getLayoutClass(): string {
   
   <div 
     class="hero-content"
-    style:{
-      `
-        position: relative;
-        z-index: 3;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-        ${getLayoutStyle()}
-        color: var(--text-primary);
-      `
-    }
+    define:vars={{
+      '--layout-direction': layout === 'side-by-side' ? 'row' : 'column',
+      '--layout-gap': '2rem',
+      '--description-margin-bottom': showAuthor && author ? '1.5rem' : '2rem',
+      '--description-max-lines': descriptionMaxLines
+    }}
   >
     {/* Content column */}
-    <div style="flex: 1; min-width: 0;">
+    <div class="hero-text-column">
       {socialProof && (
         <div class="hero-social-proof">
           <span>{socialProof.label}</span>
@@ -145,12 +139,6 @@ function getLayoutClass(): string {
       
       <h1 
         class="hero-title"
-        style={`
-          margin-bottom: 1rem;
-          line-height: 1.2;
-          color: var(--primary);
-          font-weight: 700;
-        `}
       >
         {title}
       </h1>
@@ -158,29 +146,13 @@ function getLayoutClass(): string {
       {description && (
         <p 
           class="hero-description"
-          style={`
-              margin-bottom: ${showAuthor && author ? '1.5rem' : '2rem'};
-              line-height: 1.6;
-              color: var(--secondary);
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              display: -webkit-box;
-              -webkit-line-clamp: ${descriptionMaxLines};
-          `}
         >
           {description}
         </p>
       )}
       
       {showAuthor && author && (
-        <p class="hero-author" style="
-          font-size: 0.875rem;
-          font-style: italic;
-          color: var(--accent);
-          margin-bottom: 2rem;
-        ">
+        <p class="hero-author">
           By {author}
         </p>
       )}
@@ -188,17 +160,6 @@ function getLayoutClass(): string {
       <a 
         href={href}
         class={getCtaClass(ctaVariant)}
-        style:{
-          `
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-          `
-        }
       >
         Read more
       </a>
@@ -207,26 +168,12 @@ function getLayoutClass(): string {
     {/* Image column for side-by-side layout */}
     {layout === 'side-by-side' && imageSrc && (
       <div 
-        style:{
-          `
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          `
-        }
+        class="hero-image-column"
       >
         <img 
           src={imageSrc} 
           alt={`${title} illustration`}
-          style:{
-            `
-              max-width: 100%;
-              height: auto;
-              border-radius: 0.5rem;
-              box-shadow: var(--box-shadow, 0 4px 6px rgba(0,0,0,0.1));
-            `
-          }
+          class="hero-image"
         />
       </div>
     )}
@@ -309,17 +256,71 @@ function getLayoutClass(): string {
   .hero-title {
     margin-bottom: 1rem;
     line-height: 1.2;
+    font-weight: 700;
+    color: var(--primary);
   }
   
   .hero-description {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--description-margin-bottom, 2rem);
     line-height: 1.6;
+    color: var(--secondary);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: var(--description-max-lines, 3);
   }
   
   .hero-author {
     font-size: 0.875rem;
     font-style: italic;
     color: var(--accent);
+    margin-bottom: 2rem;
+  }
+  
+  .hero-text-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .hero-image-column {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hero-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: var(--box-shadow, 0 4px 6px rgba(0,0,0,0.1));
+  }
+  
+  /* Layout variations */
+  .hero-layout-stacked {
+    flex-direction: column;
+  }
+  
+  .hero-layout-side-by-side {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  /* Gap utility */
+  .hero-content {
+    display: flex;
+    gap: var(--layout-gap, 2rem);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 3;
+    color: var(--text-primary);
   }
   
   /* Responsive adjustments */

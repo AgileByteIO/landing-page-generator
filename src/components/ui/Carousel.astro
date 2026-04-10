@@ -28,10 +28,10 @@ const {
 const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 
 // Client-side script for carousel functionality
-:let hasMounted = false;
-:let currentIndex = 0;
-:let intervalId = null;
-:let isPaused = false;
+let hasMounted = false;
+let currentIndex = 0;
+let intervalId = null;
+let isPaused = false;
 
 // Initialize carousel when component mounts
 $: if (typeof window !== 'undefined' && !hasMounted) {
@@ -127,14 +127,20 @@ function handleMouseLeave() {
         
         {/* Slide container */}
         <div 
-          class={`carousel-slide-container transition-transform duration-500 ease-in-out transform -translate-x-[${currentIndex * 100}%]`}
-          style="display: flex; width: ${items.length * 100}%;"
+          class="carousel-slide-container transition-transform duration-500 ease-in-out transform"
+          define:vars={{
+            '--translate-x': '-' + (currentIndex * 100) + '%',
+            '--carousel-width': (items.length * 100) + '%',
+            '--slide-flex': '0 0 calc(100% / ' + items.length + ')',
+            '--slide-max-width': 'calc(100% / ' + items.length + ')'
+          }}
+          style="transform: translateX(var(--translate-x)); width: var(--carousel-width);"
         >
           {items.map((item, index) => (
             <div 
               key={index} 
               class="carousel-slide flex-shrink-0 w-full"
-              style="flex: 0 0 calc(100% / ${items.length}); max-width: calc(100% / ${items.length});"
+              style="flex: var(--slide-flex); max-width: var(--slide-max-width);"
             >
               <a 
                 href={item.href} 

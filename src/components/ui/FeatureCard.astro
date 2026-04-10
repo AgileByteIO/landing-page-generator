@@ -1,0 +1,164 @@
+---
+// FeatureCard.astro - Demonstrates CSS classes and define:vars usage
+// Shows how to create reusable components with dynamic styling
+
+interface Props {
+  title: string;
+  description?: string;
+  icon?: string; // Could be a FeatherIcon name or SVG
+  href?: string;
+  // Visual customization
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  // Layout options
+  centered?: boolean;
+  // Animation options
+  animateOnHover?: boolean;
+  // Custom CSS variables (passed via define:vars)
+  bgColor?: string;
+  textColor?: string;
+  borderColor?: string;
+  hoverBgColor?: string;
+}
+
+const {
+  title,
+  description,
+  icon,
+  href,
+  variant = 'primary',
+  size = 'md',
+  centered = false,
+  animateOnHover = true,
+  bgColor,
+  textColor,
+  borderColor,
+  hoverBgColor
+} = Astro.props;
+
+// Helper function to get variant classes
+function getVariantClasses(variant: string): string {
+  switch (variant) {
+    case 'primary':
+      return 'bg-primary text-primary-foreground hover:bg-primary/90';
+    case 'secondary':
+      return 'bg-secondary text-secondary-foreground hover:bg-secondary/90';
+    case 'outline':
+      return 'border border-primary text-primary hover:bg-primary/5';
+    case 'ghost':
+      return 'text-primary hover:bg-primary/5';
+    default:
+      return 'bg-primary text-primary-foreground hover:bg-primary/90';
+  }
+}
+
+// Helper function to get size classes
+function getSizeClasses(size: string): string {
+  switch (size) {
+    case 'sm':
+      return 'p-4';
+    case 'lg':
+      return 'p-8';
+    default: // md
+      return 'p-6';
+  }
+}
+
+// Helper function to get custom style object for define:vars
+function getStyleVars() {
+  return {
+    '--card-bg-color': bgColor || 'var(--background)',
+    '--card-text-color': textColor || 'var(--foreground)',
+    '--card-border-color': borderColor || 'var(--border)',
+    '--card-hover-bg-color': hoverBgColor || 'var(--primary)'
+  };
+}
+---
+<article
+  class={`
+    group
+    flex flex-col items-${centered ? 'center' : 'start'} gap-4
+    rounded-lg border
+    ${getVariantClasses(variant)}
+    ${getSizeClasses(size)}
+    transition-all duration-200
+    ${animateOnHover ? 'hover:shadow-lg hover:-translate-y-1' : ''}
+  `}
+  {...(href && { href })}
+  define:vars={getStyleVars()}
+>
+  {/* Icon */}
+  {icon && (
+    <div class="flex h-10 w-10 items-center justify-center">
+      {/* Assuming icon is a FeatherIcon component name or similar */}
+      {/* In practice, you might use <FeatherIcon name={icon} /> or similar */}
+      <span class="text-[var(--card-text-color)]">{icon}</span>
+    </div>
+  )}
+  
+  {/* Title */}
+  <h3 class={`
+    text-lg font-semibold text-[var(--card-text-color)]
+    group-hover:text-[var(--card-hover-bg-color)] transition-colors
+  `}>
+    {title}
+  </h3>
+  
+  {/* Description */}
+  {description && (
+    <p class={`
+      text-sm text-[var(--card-text-color)]/80
+      line-clamp-3
+      group-hover:text-[var(--card-hover-bg-color)]/90 transition-colors
+      ${centered ? 'text-center' : 'text-left'}
+    `}>
+      {description}
+    </p>
+  )}
+  
+  {/* Optional link indicator */}
+  {href && (
+    <div class="mt-2 flex items-center gap-2 text-sm text-[var(--card-text-color)]/70">
+      Read more
+      <span class="arrow-right">→</span>
+    </div>
+  )}
+</article>
+
+<style>
+  /* Base card styles using CSS variables from define:vars */
+  :scope {
+    background: var(--card-bg-color);
+    color: var(--card-text-color);
+    border: 1px solid var(--card-border-color);
+  }
+  
+  :scope:hover {
+    background: var(--card-hover-bg-color);
+  }
+  
+  /* Arrow icon for link indicator */
+  .arrow-right {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+  
+  :scope:hover .arrow-right {
+    transform: translateX(2px) rotate(45deg);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    :scope {
+      &:not(.group-start) {
+        items-center;
+        text-center;
+      }
+    }
+  }
+</style>
