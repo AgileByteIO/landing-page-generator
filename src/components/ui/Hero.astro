@@ -156,14 +156,14 @@ function getLayoutStyle(): string {
     {/* Content column */}
     <div style="flex: 1; min-width: 0;">
       {socialProof && (
-        <div class="hero-social-proof" style="
+        <div class="hero-social-proof" style={`
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
           font-size: 0.875rem;
           color: var(--secondary);
           margin-bottom: 1rem;
-        ">
+        `}>
           <span>{socialProof.label}</span>
           <span>{socialProof.count.toLocaleString()}</span>
         </div>

@@ -1,0 +1,312 @@
+---
+interface CarouselItem {
+  title: string;
+  description?: string;
+  author?: string;
+  href: string;
+}
+
+interface CarouselProps {
+  items: CarouselItem[];
+  autoPlay?: boolean;
+  interval?: number; // in milliseconds
+  showControls?: boolean;
+  showIndicators?: boolean;
+  pauseOnHover?: boolean;
+}
+
+const {
+  items = [],
+  autoPlay = false,
+  interval = 5000,
+  showControls = true,
+  showIndicators = true,
+  pauseOnHover = true
+} = Astro.props;
+
+// Generate unique ID for this carousel instance
+const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
+
+// Client-side script for carousel functionality
+:let hasMounted = false;
+:let currentIndex = 0;
+:let intervalId = null;
+:let isPaused = false;
+
+// Initialize carousel when component mounts
+$: if (typeof window !== 'undefined' && !hasMounted) {
+  hasMounted = true;
+  currentIndex = 0;
+  
+  if (autoPlay && items.length > 1) {
+    intervalId = setInterval(() => {
+      if (!isPaused) {
+        nextSlide();
+      }
+    }, interval);
+  }
+  
+  // Cleanup on unmount
+  return () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  };
+}
+
+// Handle visibility changes to pause/resume when tab is hidden
+$: if (typeof window !== 'undefined' && hasMounted) {
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      isPaused = true;
+    } else {
+      isPaused = false;
+    }
+  };
+  
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}
+
+// Functions to control slides
+function nextSlide() {
+  if (items.length <= 1) return;
+  currentIndex = (currentIndex + 1) % items.length;
+}
+
+function prevSlide() {
+  if (items.length <= 1) return;
+  currentIndex = (currentIndex - 1 + items.length) % items.length;
+}
+
+function goToSlide(index: number) {
+  if (items.length <= 1) return;
+  currentIndex = ((index % items.length) + items.length) % items.length;
+}
+
+// Pause on hover if enabled
+function handleMouseEnter() {
+  if (pauseOnHover) {
+    isPaused = true;
+  }
+}
+
+function handleMouseLeave() {
+  if (pauseOnHover) {
+    isPaused = false;
+  }
+}
+---
+
+{#if items.length > 0}
+  <div 
+    id={carouselId}
+    class="carousel-wrapper relative"
+    on:mouseenter={handleMouseEnter}
+    on:mouseleave={handleMouseLeave}
+  >
+    {/* Carousel content */}
+    <div class="carousel-content overflow-hidden">
+      {#if items.length > 1}
+        {/* Previous button */}
+        {showControls && (
+          <button 
+            class="carousel-btn carousel-btn-prev absolute left-0 top-1/2 -translate-y-1/2 z-10"
+            on:click={prevSlide}
+            aria-label="Previous slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        )}
+        
+        {/* Slide container */}
+        <div 
+          class={`carousel-slide-container transition-transform duration-500 ease-in-out transform -translate-x-[${currentIndex * 100}%]`}
+          style="display: flex; width: ${items.length * 100}%;"
+        >
+          {items.map((item, index) => (
+            <div 
+              key={index} 
+              class="carousel-slide flex-shrink-0 w-full"
+              style="flex: 0 0 calc(100% / ${items.length}); max-width: calc(100% / ${items.length});"
+            >
+              <a 
+                href={item.href} 
+                class="card-wrapper block hover:shadow-lg transition-shadow duration-200"
+              >
+                <div class="card bg-background rounded-lg border border-primary/20 p-4 hover:border-primary/40 transition-border duration-200">
+                  <h3 class="card-title text-primary font-semibold mb-2">{item.title}</h3>
+                  {item.description && (
+                    <p class="card-description text-secondary/80 mb-2 line-clamp-2">{item.description}</p>
+                  )}
+                  {item.author && (
+                    <small class="card-author text-accent/70">{item.author}</small>
+                  )}
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+      {:else}
+        {/* Single item - no carousel needed */}
+        <div class="carousel-slide">
+          <a 
+            href={items[0].href} 
+            class="card-wrapper block hover:shadow-lg transition-shadow duration-200"
+          >
+            <div class="card bg-background rounded-lg border border-primary/20 p-4 hover:border-primary/40 transition-border duration-200">
+              <h3 class="card-title text-primary font-semibold mb-2">{items[0].title}</h3>
+              {items[0].description && (
+                <p class="card-description text-secondary/80 mb-2 line-clamp-2">{items[0].description}</p>
+              )}
+              {items[0].author && (
+                <small class="card-author text-accent/70">{items[0].author}</small>
+              )}
+            </div>
+          </a>
+        </div>
+      {/if}
+      
+      {/* Next button */}
+      {showControls && items.length > 1 && (
+        <button 
+          class="carousel-btn carousel-btn-next absolute right-0 top-1/2 -translate-y-1/2 z-10"
+          on:click={nextSlide}
+          aria-label="Next slide"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      )}
+    </div>
+    
+    {/* Indicators */}
+    {showIndicators && items.length > 1 && (
+      <div class="carousel-indicators absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {items.map((_, index) => (
+          <button
+            key={index}
+            class:list={[
+              'carousel-indicator',
+              index === currentIndex ? 'active' : ''
+            ]}
+            on:click={() => goToSlide(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          >
+            <span class="sr-only">Slide {index + 1}</span>
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+{:else}
+  <p class="text-center text-secondary">No content to display</p>
+{/if}
+
+<style>
+  .carousel-wrapper {
+    @apply max-w-full overflow-hidden;
+  }
+  
+  .carousel-content {
+    @apply relative;
+  }
+  
+  .carousel-slide-container {
+    @apply flex;
+  }
+  
+  .carousel-slide {
+    @apply flex flex-col;
+  }
+  
+  .card-wrapper {
+    @apply cursor-pointer;
+  }
+  
+  .card {
+    @apply flex flex-col h-full;
+  }
+  
+  .card-title {
+    @apply text-lg;
+  }
+  
+  .card-description {
+    @apply text-base flex-grow;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Button styles */
+  .carousel-btn {
+    @apply bg-background/80 backdrop-blur-sm text-primary/80 hover:text-primary hover:bg-background/90 transition-all duration-200 p-2 rounded-full shadow-lg;
+    @apply border border-primary/20 hover:border-primary/40;
+    @apply flex items-center justify-center;
+  }
+  
+  .carousel-btn:hover {
+    @apply bg-background/90;
+  }
+  
+  /* Indicator styles */
+  .carousel-indicator {
+    @apply w-3 h-3 bg-secondary/30 rounded-full transition-all duration-200;
+    @apply hover:bg-secondary/40 focus:bg-secondary/50;
+  }
+  
+  .carousel-indicator.active {
+    @apply bg-secondary/60;
+    @apply w-4 h-4;
+  }
+  
+  /* Responsive adjustments */
+  @apply sm:gap-4 lg:gap-6;
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .card {
+      @apply bg-background/90 border-border/30;
+    }
+    
+    .card-description {
+      @apply text-secondary/70;
+    }
+    
+    .card-author {
+      @apply text-accent/60;
+    }
+    
+    .carousel-btn {
+      @apply bg-background/70 hover:bg-background/80;
+    }
+  }
+  
+  /* Hide scrollbar but allow scrolling */
+  .carousel-wrapper {
+    @apply scrollbar-hidden;
+  }
+  
+  /* For Firefox */
+  .carousel-wrapper {
+    scrollbar-width: none;
+  }
+  
+  /* For WebKit */
+  .carousel-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+</style>

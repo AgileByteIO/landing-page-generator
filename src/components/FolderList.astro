@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Hero from './ui/Hero.astro';
-import Carousel from './ui/Carousel';
+import Carousel from './ui/Carousel.astro';
 import Grid from './ui/Grid.astro';
 
 interface Props {
@@ -66,9 +66,21 @@ const heroHref = items.length === 1 ? indexHref : items[0]?.href;
 )}
 
 {useComponent === 'carousel' && items.length > 1 && (
-  <Carousel client:load items={items} />
+  <Carousel 
+    client:load 
+    items={items}
+    autoPlay={true}
+    interval={5000}
+    showControls={true}
+    showIndicators={true}
+    pauseOnHover={true}
+  />
 )}
 
 {useComponent === 'grid' && items.length > 1 && (
-  <Grid items={items} />
+  <Grid 
+    items={items}
+    columns={3}
+    gap="1.5rem"
+  />
 )}
