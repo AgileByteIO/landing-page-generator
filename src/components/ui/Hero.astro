@@ -70,72 +70,53 @@ function getCtaClass(variant: string): string {
   }
 }
 
-// Helper function to get background style
-function getBackgroundStyle(): string {
+// Helper function to get background class
+function getBackgroundClass(): string {
   switch (backgroundType) {
     case 'gradient':
-      return `background: linear-gradient(135deg, ${gradientColors.join(', ')})`;
+      return 'hero-bg-gradient';
     case 'image':
-      if (imageSrc) {
-        return `
-          background-image: url(${imageSrc});
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        `;
-      }
-      return 'background-color: var(--background)';
+      return imageSrc ? 'hero-bg-image' : 'hero-bg-solid';
     default:
-      return 'background-color: var(--background)';
+      return 'hero-bg-solid';
   }
 }
 
-// Helper function to get container height style
-function getHeightStyle(): string {
+// Helper function to get height class
+function getHeightClass(): string {
   switch (height) {
     case 'full-screen':
-      return 'height: 100vh; min-height: 400px;';
+      return 'hero-height-full';
     case 'fixed':
-      return `height: ${minHeight}px;`;
+      return 'hero-height-fixed';
     case 'auto':
-      return `min-height: ${minHeight}px;`;
+      return 'hero-height-auto';
     default:
-      return `min-height: ${minHeight}px;`;
+      return 'hero-height-auto';
   }
 }
 
-// Helper function to get text alignment style
-function getTextAlignStyle(): string {
+// Helper function to get text alignment class
+function getTextAlignClass(): string {
   switch (alignment) {
-    case 'left': return 'text-align: left;';
-    case 'center': return 'text-align: center;';
-    case 'right': return 'text-align: right;';
-    default: return 'text-align: left;';
+    case 'left': return 'hero-text-left';
+    case 'center': return 'hero-text-center';
+    case 'right': return 'hero-text-right';
+    default: return 'hero-text-left';
   }
 }
 
-// Helper function to get layout flex direction
-function getLayoutStyle(): string {
+// Helper function to get layout class
+function getLayoutClass(): string {
   return layout === 'side-by-side' 
-    ? 'display: flex; flex-direction: row; gap: 4rem; align-items: center;'
-    : 'display: flex; flex-direction: column; gap: 0; align-items: flex-start;';
+    ? 'hero-layout-side-by-side'
+    : 'hero-layout-stacked';
 }
 ---
 
 <!-- Hero Section -->
 <section 
-  class="hero"
-  style:{
-    `
-      ${getHeightStyle()}
-      ${getBackgroundStyle()}
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      display: flex;
-      align-items: center;
-    `
-  }
+  class={`hero ${getHeightClass()} ${getBackgroundClass()}`}
 >
   {/* Optional shape dividers would go here if needed */}
   

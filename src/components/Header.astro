@@ -21,11 +21,11 @@ const backgroundColor = import.meta.env.BACKGROUND_COLOR || "#f8fafc";
 const supportedLanguages = ['en', 'de'];
 const currentPath = Astro.url.pathname;
 const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
-const currentLang = langMatch ? langMatch[1] : null;
+const currentLang = langMatch ? langMatch[1] : 'en'; // Default to 'en' if no language detected
 
 const allContent = await getCollection('landingpage');
 const documents = allContent
-  .filter(post => post.id.startsWith('en/documents/'))
+  .filter(post => post.id.startsWith(`${currentLang}/documents/`))
   .map(post => {
     const parts = post.id.split('/');
     const fileName = parts[2].replace(/\.md$/, '');
