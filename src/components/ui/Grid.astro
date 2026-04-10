@@ -31,15 +31,15 @@ const getColumnClasses = (cols: number) => {
   {items.map((item) => (
     <a 
       href={item.href} 
-      class="card-wrapper block hover:shadow-lg transition-shadow duration-200"
+      class="card block hover:shadow-lg transition-shadow duration-200"
     >
       <div class="card bg-background rounded-lg border border-primary/20 p-4 hover:border-primary/40 transition-border duration-200">
-        <h3 class="card-title text-primary font-semibold mb-2">{item.title}</h3>
+        <h3 class="card__title text-primary font-semibold mb-2">{item.title}</h3>
         {item.description && (
-          <p class="card-description text-secondary/80 mb-2 line-clamp-2">{item.description}</p>
+          <p class="card__description text-secondary/80 mb-2 line-clamp-2">{item.description}</p>
         )}
         {item.author && (
-          <small class="card-author text-accent/70">{item.author}</small>
+          <small class="card__meta text-accent/70">{item.author}</small>
         )}
       </div>
     </a>
@@ -47,43 +47,43 @@ const getColumnClasses = (cols: number) => {
 </div>
 
 <style>
-  .card-wrapper {
+  .card {
     @apply cursor-pointer;
   }
-  
+   
   .card {
     @apply flex flex-col h-full;
   }
-  
-  .card-title {
+   
+  .card__title {
     @apply text-lg;
   }
-  
-  .card-description {
+   
+  .card__description {
     @apply text-base flex-grow;
   }
-  
+   
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+   
   /* Responsive utilities */
   @apply sm:gap-4 lg:gap-6;
-  
+   
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
     .card {
       @apply bg-background/90 border-border/30;
     }
-    
-    .card-description {
+   
+    .card__description {
       @apply text-secondary/70;
     }
-    
-    .card-author {
+   
+    .card__meta {
       @apply text-accent/60;
     }
   }
