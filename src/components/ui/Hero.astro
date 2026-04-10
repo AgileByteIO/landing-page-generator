@@ -171,14 +171,12 @@ function getLayoutStyle(): string {
       
       <h1 
         class="hero-title"
-        style:{
-          `
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            color: var(--primary);
-            font-weight: 700;
-          `
-        }
+        style={`
+          margin-bottom: 1rem;
+          line-height: 1.2;
+          color: var(--primary);
+          font-weight: 700;
+        `}
       >
         {title}
       </h1>
@@ -186,8 +184,7 @@ function getLayoutStyle(): string {
       {description && (
         <p 
           class="hero-description"
-          style:{
-            `
+          style={`
               margin-bottom: ${showAuthor && author ? '1.5rem' : '2rem'};
               line-height: 1.6;
               color: var(--secondary);
@@ -197,8 +194,7 @@ function getLayoutStyle(): string {
               text-overflow: ellipsis;
               display: -webkit-box;
               -webkit-line-clamp: ${descriptionMaxLines};
-            `
-          }
+          `}
         >
           {description}
         </p>
