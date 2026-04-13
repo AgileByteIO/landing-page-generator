@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import FeatherIcon from '../ui/FeatherIcon';
 
 interface CarouselItem {
   title: string;
@@ -78,9 +79,7 @@ export default function Carousel({ id, title, items, background = '' }: Carousel
         <div className="carousel-wrapper">
           {canNavigate && (
             <button onClick={handlePrev} className="carousel-nav carousel-nav-prev" aria-label="Previous slide">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
+              <FeatherIcon name="chevron-left" size={24} />
             </button>
           )}
 
@@ -95,10 +94,7 @@ export default function Carousel({ id, title, items, background = '' }: Carousel
                     {item.author && <small className="carousel-card-author">By {item.author}</small>}
                     <span className="carousel-card-cta">
                       View details
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
+                      <FeatherIcon name="arrow-right" size={16} />
                     </span>
                   </div>
                 </a>
@@ -108,9 +104,7 @@ export default function Carousel({ id, title, items, background = '' }: Carousel
 
           {canNavigate && (
             <button onClick={handleNext} className="carousel-nav carousel-nav-next" aria-label="Next slide">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
+              <FeatherIcon name="chevron-right" size={24} />
             </button>
           )}
         </div>
