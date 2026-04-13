@@ -60,13 +60,158 @@ const backUrl = `/${lang}`;
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-  <nav>
-    <Button type="link" style="outline" href={backUrl}>
-      Back to Landingpage
-      <FeatherIcon name="arrow-left" size={14} slot="icon" />
-    </Button>
-  </nav>
-  <article>
-    <Content />
+  <article class="article">
+    <div class="article-header">
+      <div class="article-gradient"></div>
+      <div class="article-header-content">
+        <Button type="link" style="outline" href={backUrl}>
+          <FeatherIcon name="arrow-left" size={16} slot="icon" />
+          Back
+        </Button>
+      </div>
+    </div>
+    
+    <div class="section-content">
+      <header class="article-head">
+        <h1 class="article-title">{post.data.title}</h1>
+        {post.data.description && <p class="article-summary">{post.data.description}</p>}
+      </header>
+      
+      <div class="article-content">
+        <Content />
+      </div>
+    </div>
   </article>
 </Layout>
+
+<style>
+  .article {
+    width: 100%;
+  }
+
+  .article-header {
+    position: relative;
+    min-height: 20vh;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+  }
+
+  .article-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--background) 0%, transparent 40%), 
+                linear-gradient(225deg, var(--primary) 0%, transparent 50%), 
+                linear-gradient(45deg, var(--accent) 0%, transparent 40%);
+    background-color: var(--background);
+    opacity: 0.85;
+  }
+
+  .article-header-content {
+    position: relative;
+    width: 100%;
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  .article-head {
+    margin-bottom: 2rem;
+  }
+
+  .article-title {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .article-summary {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    max-width: 65ch;
+  }
+
+  .article-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .article-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .article-content :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .article-content :global(a:hover) {
+    opacity: 0.8;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  .article-content :global(code) {
+    background: #f1f5f9;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .article-content :global(pre) {
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(hr) {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .article-header {
+      min-height: 15vh;
+    }
+
+    .article-header-content {
+      padding: 0.75rem 0 1rem;
+    }
+
+    .article-title {
+      font-size: 1.5rem;
+    }
+
+    .article-summary {
+      font-size: 1rem;
+    }
+  }
+</style>

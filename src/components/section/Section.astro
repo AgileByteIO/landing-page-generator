@@ -1,16 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
-import Hero from './ui/Hero';
-import Carousel from './ui/Carousel';
-import Grid from './ui/Grid.astro';
+import Hero from './Hero.astro';
+import Carousel from './Carousel';
+import Grid from './Grid.astro';
 
 interface Props {
   lang: string;
   path: string;
   component?: 'hero' | 'carousel' | 'grid';
+  showTitle?: string;
 }
 
-const { lang, path, component } = Astro.props;
+const { lang, path, component, showTitle } = Astro.props;
 
 const allPosts = await getCollection('landingpage');
 const normalizedFolder = path.replace(/^\//, '').replace(/\/$/, '');
@@ -57,7 +58,6 @@ const heroHref = items.length === 1 ? indexHref : items[0]?.href;
 
 {(useComponent === 'hero' || items.length === 1) && items.length > 0 && (
   <Hero 
-    client:load 
     title={items[0].title} 
     description={items[0].description} 
     author={items[0].author} 
@@ -66,9 +66,9 @@ const heroHref = items.length === 1 ? indexHref : items[0]?.href;
 )}
 
 {useComponent === 'carousel' && items.length > 1 && (
-  <Carousel client:load items={items} />
+  <Carousel client:load items={items} title={showTitle} />
 )}
 
 {useComponent === 'grid' && items.length > 1 && (
-  <Grid items={items} />
+  <Grid items={items} title={showTitle} />
 )}

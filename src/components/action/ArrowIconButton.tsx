@@ -10,7 +10,7 @@ interface ArrowIconButtonProps {
   'aria-label': string;
 }
 
-const icons: Record<string, JSX.Element> = {
+const icons: Record<string, React.JSX.Element> = {
   'up': (
     <svg
       xmlns="http://www.w3.org/2000/svg"

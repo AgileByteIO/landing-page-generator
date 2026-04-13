@@ -1,0 +1,75 @@
+---
+interface Props {
+  id?: string;
+  title: string;
+  description?: string;
+  author?: string;
+  href: string;
+  size?: 'sm' | 'md' | 'lg' | 'full';
+  background?: string;
+}
+
+const { id, title, description, author, href, size = 'lg', background = '' } = Astro.props;
+
+const sizeClasses = {
+  sm: 'hero-sm',
+  md: 'hero-md',
+  lg: 'hero-lg',
+  full: 'hero-full'
+};
+---
+
+<section id={id} class:list={['hero', sizeClasses[size], background.split(' ')]}>
+  <div class="hero-gradient"></div>
+  <div class="hero-glow"></div>
+  <div class="section-content">
+    <div class="hero-content">
+      <h1>{title}</h1>
+      {description && <p class="hero-description">{description}</p>}
+      {author && <p class="hero-author">By {author}</p>}
+      <a href={href} class="hero-link">
+        Read more
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.125rem" height="1.125rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { display: flex; align-items: center; justify-content: center; position: relative; width: 100%; overflow: hidden; }
+  .hero-sm { min-height: 12.5rem; }
+  .hero-md { min-height: 18.75rem; }
+  .hero-lg { min-height: 25rem; }
+  .hero-full { min-height: 31.25rem; }
+
+  .section-content { display: flex; align-items: center; justify-content: center; width: 100%; }
+
+  .hero-gradient { position: absolute; inset: 0; background: linear-gradient(135deg, var(--background) 0%, transparent 40%), linear-gradient(225deg, var(--primary) 0%, transparent 50%), linear-gradient(45deg, var(--accent) 0%, transparent 40%); background-color: var(--background); opacity: 0.85; z-index: 0; }
+  .hero-glow { position: absolute; width: 200%; height: 200%; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%); opacity: 0.12; filter: blur(3.75rem); animation: pulse 8s ease-in-out infinite; z-index: 0; pointer-events: none; }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.12; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.18; }
+  }
+
+  .hero-content { width: 100%; max-width: 50rem; text-align: center; }
+  .hero-title { background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.75rem; }
+  .hero-description { font-size: clamp(0.95rem, 1.5vw, 1.15rem); line-height: 1.65; margin-bottom: 0.75rem; opacity: 0.8; }
+  .hero-author { font-style: italic; font-size: 0.9rem; margin-bottom: 1.25rem; opacity: 0.9; }
+  .hero-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary), var(--accent) 15%) 100%); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .hero-link:hover { transform: translateY(-2px); }
+  .hero-link svg { transition: transform 0.2s ease; }
+  .hero-link:hover svg { transform: translateX(3px); }
+
+  @media (max-width: 40rem) {
+    .hero-sm { min-height: 10rem; }
+    .hero-md { min-height: 14rem; }
+    .hero-lg { min-height: 18rem; }
+    .hero-full { min-height: 22rem; }
+    .hero-link { font-size: 0.875rem; }
+    .hero-link svg { width: 0.875rem; height: 0.875rem; }
+  }
+</style>

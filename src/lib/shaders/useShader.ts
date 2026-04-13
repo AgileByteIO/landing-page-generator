@@ -36,7 +36,7 @@ export function useShader(
   shaderConfig: ShaderConfig | null,
   fallback: () => void
 ) {
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
   const glRef = useRef<WebGLRenderingContext | null>(null);
   const programRef = useRef<WebGLProgram | null>(null);
 

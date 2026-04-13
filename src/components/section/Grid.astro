@@ -1,0 +1,140 @@
+---
+interface GridItem {
+  title: string;
+  description?: string;
+  author?: string;
+  href: string;
+}
+
+interface Props {
+  id?: string;
+  title?: string;
+  items: GridItem[];
+  background?: string;
+}
+
+const { id, title, items, background = '' } = Astro.props;
+---
+
+<section id={id} class:list={['grid-section', background.split(' ')]}>
+  <div class="section-content">
+    {title && <h2>{title}</h2>}
+    <div class="grid-container">
+      {items.map((item) => (
+        <a href={item.href} class="grid-card">
+          <div class="card-inner">
+            <h3>{item.title}</h3>
+            {item.description && <p class="card-description">{item.description}</p>}
+            {item.author && <small class="card-author">By {item.author}</small>}
+            <span class="card-arrow">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .grid-card {
+    display: block;
+    background: white;
+    border-radius: var(--border-radius, 8px);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .grid-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .grid-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+  }
+
+  .grid-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .card-inner {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+  }
+
+  .card-title {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-description {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-author {
+    color: var(--accent);
+    font-style: italic;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    display: block;
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    color: var(--primary);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .grid-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (max-width: 640px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+
+    .card-inner {
+      padding: 1.25rem;
+    }
+  }
+</style>

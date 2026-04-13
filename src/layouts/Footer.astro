@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+
+interface DocItem {
+  title: string;
+  href: string;
+}
+
+interface Props {
+  companyName?: string;
+}
+
+const { companyName = 'Company Name' } = Astro.props;
+
+const allContent = await getCollection('landingpage');
+const documents: DocItem[] = allContent
+  .filter(post => post.id.startsWith('en/documents/'))
+  .map(post => {
+    const parts = post.id.split('/');
+    const fileName = parts[2].replace(/\.md$/, '');
+    const folderName = parts[1];
+    return {
+      title: post.data.title,
+      href: `/${parts[0]}/${folderName}/${fileName}`
+    };
+  });
+---
+
+<footer class="footer">
+  <div class="footer-container">
+    {documents.length > 0 && (
+      <nav class="footer-nav">
+        {documents.map(doc => (
+          <a href={doc.href} class="footer-link">{doc.title}</a>
+        ))}
+      </nav>
+    )}
+    <p class="footer-copyright">&copy; {new Date().getFullYear()} {companyName}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--secondary);
+    color: white;
+    padding: 2rem 1.5rem;
+    margin-top: auto;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-link {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  .footer-copyright {
+    opacity: 0.7;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 640px) {
+    .footer-nav {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>

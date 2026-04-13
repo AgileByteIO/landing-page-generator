@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import FolderList from '../../components/FolderList.astro';
+import SectionSwitcher from '../../components/section/SectionSwitcher.astro';
 
 export const prerender = true;
 
@@ -21,7 +21,6 @@ interface Props {
 const { lang } = Astro.props;
 
 const allContent = await getCollection('landingpage');
-
 const langContent = allContent.filter(post => post.id.startsWith(`${lang}/root/`));
 
 const mainSubfolders = [...new Set(
@@ -31,14 +30,14 @@ const mainSubfolders = [...new Set(
   })
 )];
 
-interface Section {
+interface SectionData {
   folder: string;
   order: number;
   component: 'hero' | 'carousel' | 'grid';
   title: string;
 }
 
-const sections: Section[] = mainSubfolders.map(folder => {
+const sections: SectionData[] = mainSubfolders.map(folder => {
   const folderParts = folder.split('/')[1].split('_');
   const order = parseInt(folderParts[0], 10);
   const componentMatch = folderParts[folderParts.length - 1].match(/^(hero|carousel|grid)$/);
@@ -58,11 +57,5 @@ sections.sort((a, b) => a.order - b.order);
 ---
 
 <Layout title="AgileByte OÜ" description="">
-
-  {sections.map((section, index) => (
-    <section>
-      {index === 0 ? "" : <h2>{section.title}</h2>}
-      <FolderList lang={lang} path={`${lang}/${section.folder}/`} component={section.component} />
-    </section>
-  ))}
+  <SectionSwitcher lang={lang} sections={sections} />
 </Layout>
