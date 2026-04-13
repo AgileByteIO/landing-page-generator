@@ -24,13 +24,13 @@ const items = filteredPosts.map((post) => {
   const postParts = post.id.split('/');
   const rootFolder = postParts[1];
   const folderName = postParts[2];
-  const fileName = postParts[3].replace(/\.md$/, '');
+  const fileNameWithPrefix = postParts[3].replace(/\.md$/, '');
+  const fileName = fileNameWithPrefix.replace(/^\d+_/, '');
   const folderParts = folderName.split('_');
   const sectionName = folderParts.slice(1, -1).join('-');
   
   const basePath = rootFolder === 'root' ? '' : `/${rootFolder}`;
-  const sectionPath = sectionName ? `/${sectionName}` : '';
-  const href = `/${lang}${basePath}${sectionPath}/${fileName}`;
+  const href = `/${lang}/${sectionName}/${fileName}`;
   
   return {
     title: post.data.title,
@@ -43,13 +43,9 @@ const items = filteredPosts.map((post) => {
 const useComponent = component || (items.length === 1 ? 'hero' : 'carousel');
 
 const pathParts = path.replace(/^\//, '').replace(/\/$/, '').split('/');
-const rootFolder = pathParts[1];
-const folderName = pathParts[2];
-const folderParts = folderName?.split('_') || [];
+const folderParts = pathParts[2]?.split('_') || [];
 const sectionName = folderParts.slice(1, -1).join('-');
-const basePath = rootFolder === 'root' ? '' : `/${rootFolder}`;
-const sectionPath = sectionName ? `/${sectionName}` : '';
-const indexHref = `/${lang}${basePath}${sectionPath}`;
+const indexHref = `/${lang}/${sectionName}`;
 
 const heroHref = items.length === 1 ? indexHref : items[0]?.href;
 ---

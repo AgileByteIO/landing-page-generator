@@ -5,7 +5,7 @@ pubDate: 2024-03-25
 author: "Mario"
 ---
 
-# Social Media Dashboard
+## Social Media Dashboard
 
 A unified dashboard for managing multiple social media accounts. Features:
 - Schedule posts across platforms

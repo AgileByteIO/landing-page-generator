@@ -5,7 +5,7 @@ pubDate: 2024-03-10
 author: "Mario"
 ---
 
-# Weather Dashboard
+## Weather Dashboard
 
 A beautiful weather dashboard that displays real-time weather data. Features:
 - 7-day forecast

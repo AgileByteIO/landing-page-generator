@@ -1,0 +1,141 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import Article from "../../../components/page/Article.astro";
+import IconButton from "../../../components/action/IconButton.astro";
+
+export const prerender = true;
+
+type PathParams = { lang: string; folder: string; slug: string };
+type PathProps = { post: CollectionEntry<"landingpage">; Content: unknown; backUrl: string };
+
+export async function getStaticPaths() {
+  const posts = await getCollection("landingpage");
+
+  const filteredPosts = posts.filter((p: CollectionEntry<"landingpage">) =>
+    p.id.includes("/"),
+  );
+
+  const folderGroups = new Map<string, CollectionEntry<"landingpage">[]>();
+  filteredPosts.forEach((post) => {
+    const parts = post.id.split("/");
+    const folderKey = `${parts[0]}/${parts[1]}/${parts[2]}`;
+    const existing = folderGroups.get(folderKey);
+    if (existing) {
+      existing.push(post);
+    } else {
+      folderGroups.set(folderKey, [post]);
+    }
+  });
+
+  const paths: { params: PathParams; props: PathProps }[] = [];
+
+  for (const [folderKey, folderPosts] of folderGroups) {
+    const [lang, rootFolder, folderName] = folderKey.split("/");
+    const isRoot = rootFolder === "root";
+
+    let folderSlug: string;
+    
+    if (isRoot) {
+      const folderParts = folderName.split("_");
+      folderSlug = folderParts.slice(1, -1).join("-");
+    } else {
+      folderSlug = folderName;
+    }
+
+    // Skip single article folders - they are handled by root-level routes
+    if (folderPosts.length <= 1) continue;
+
+    for (const post of folderPosts) {
+      const idParts = post.id.split("/");
+      const depth = idParts.length;
+      const fileNameWithPrefix = depth > 3 
+        ? idParts[3]?.replace(/\.md$/, "") 
+        : idParts[2]?.replace(/\.md$/, "") || "";
+      const itemSlug = fileNameWithPrefix.replace(/^\d+_/, '');
+      
+      const { Content: PostContent } = await render(post);
+      
+      paths.push({
+        params: { lang, folder: folderSlug, slug: itemSlug },
+        props: { 
+          post,
+          Content: PostContent,
+          backUrl: `/${lang}/${folderSlug}`
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { post, Content: PostContent, backUrl } = Astro.props as PathProps;
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <div class="x-header">
+    <div class="x-header-gradient"></div>
+    <div class="x-header-content">
+      <IconButton icon="arrow-left" style="outline" href={backUrl} type="link"/>
+    </div>
+  </div>
+  <Article post={post}>
+    <PostContent />
+  </Article>
+</Layout>
+
+<style>
+  .x-header {
+    position: relative;
+    min-height: 20vh;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+  }
+
+  .x-header-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, var(--background) 0%, transparent 40%),
+      linear-gradient(225deg, var(--primary) 0%, transparent 50%),
+      linear-gradient(45deg, var(--accent) 0%, transparent 40%);
+    background-color: var(--background);
+    opacity: 0.85;
+  }
+
+  .x-header-content {
+    position: relative;
+    bottom: -1rem;
+    left: 1.25rem;
+  }
+
+  .x-header-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--background);
+    border: 1px solid var(--primary);
+    border-radius: 0.5rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .x-header-back:hover {
+    background: var(--primary);
+    color: var(--background);
+  }
+
+  @media (max-width: 640px) {
+    .x-header {
+      min-height: 15vh;
+    }
+    .x-header-content {
+       padding: 0.25rem 0.125rem;
+    }
+  }
+</style>

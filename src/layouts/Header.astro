@@ -1,5 +1,6 @@
 ---
-import FeatherIcon from '../components/ui/FeatherIcon.astro';
+import IconButton from "../components/action/IconButton.astro";
+import FeatherIcon from "../components/ui/FeatherIcon.astro";
 
 interface NavItem {
   label: string;
@@ -15,66 +16,73 @@ interface Props {
 }
 
 const {
-  logo = 'Logo',
-  logoHref = '/',
+  logo = "Logo",
+  logoHref = "/",
   navItems = [],
   showLangSwitcher = false,
-  supportedLanguages = ['en', 'de'],
+  supportedLanguages = ["en", "de"],
 } = Astro.props;
 ---
 
 <header class="header" id="main-header">
   <div class="header-container">
     <a href={logoHref} class="header-logo">{logo}</a>
-
-    <button class="header-hamburger" aria-label="Toggle menu" id="menu-toggle">
-      <FeatherIcon name="menu" size={24} />
-    </button>
-
+    <div class="header-hamburger">
+      <IconButton
+        id="menu-toggle"
+        icon="menu"
+        style="ghost"
+        type="button"
+      />
+    </div>
     <nav class="header-nav" id="main-nav">
       <ul class="header-nav-list">
-        {navItems.map((item) => (
-          <li class="header-nav-item">
-            <a href={item.href} class="header-nav-link">{item.label}</a>
-          </li>
-        ))}
+        {
+          navItems.map((item) => (
+            <li class="header-nav-item">
+              <a href={item.href} class="header-nav-link">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
       <div class="header-actions">
-        {showLangSwitcher && (
-          <slot name="lang-switcher" />
-        )}
+        {showLangSwitcher && <slot name="lang-switcher" />}
       </div>
     </nav>
   </div>
 </header>
 
 <script>
-  const header = document.getElementById('main-header');
-  const menuToggle = document.getElementById('menu-toggle');
-  const mainNav = document.getElementById('main-nav');
+  const header = document.getElementById("main-header");
+  const menuToggle = document.getElementById("menu-toggle");
+  const mainNav = document.getElementById("main-nav");
 
   const handleScroll = () => {
     if (window.scrollY > 20) {
-      header?.classList.add('is-scrolled');
+      header?.classList.add("is-scrolled");
     } else {
-      header?.classList.remove('is-scrolled');
+      header?.classList.remove("is-scrolled");
     }
   };
 
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
   handleScroll();
 
-  menuToggle?.addEventListener('click', () => {
-    mainNav?.classList.toggle('is-open');
-    menuToggle.classList.toggle('is-open');
+  menuToggle?.addEventListener("click", () => {
+    mainNav?.classList.toggle("is-open");
+    menuToggle.classList.toggle("is-open");
   });
 
-  document.addEventListener('click', (e) => {
-    if (mainNav?.classList.contains('is-open') && 
-        !mainNav.contains(e.target as Node) && 
-        !menuToggle?.contains(e.target as Node)) {
-      mainNav.classList.remove('is-open');
-      menuToggle?.classList.remove('is-open');
+  document.addEventListener("click", (e) => {
+    if (
+      mainNav?.classList.contains("is-open") &&
+      !mainNav.contains(e.target as Node) &&
+      !menuToggle?.contains(e.target as Node)
+    ) {
+      mainNav.classList.remove("is-open");
+      menuToggle?.classList.remove("is-open");
     }
   });
 </script>
@@ -119,17 +127,9 @@ const {
 
   .header-hamburger {
     display: none;
-    padding: 0.5rem;
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--secondary);
-    border-radius: 0.5rem;
-    transition: background 0.2s ease;
-  }
-
-  .header-hamburger:hover {
-    background: var(--background);
   }
 
   .header-nav {
@@ -156,7 +156,7 @@ const {
   }
 
   .header-nav-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;

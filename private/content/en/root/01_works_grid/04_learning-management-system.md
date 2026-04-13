@@ -5,7 +5,7 @@ pubDate: 2024-04-18
 author: "Mario"
 ---
 
-# Learning Management System
+## Learning Management System
 
 A modern e-learning platform for creating and taking online courses. Includes:
 - Video streaming

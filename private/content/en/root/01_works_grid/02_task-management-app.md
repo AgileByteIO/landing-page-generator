@@ -5,7 +5,7 @@ pubDate: 2024-02-20
 author: "Mario"
 ---
 
-# Task Management App
+## Task Management App
 
 A collaborative task management application designed for agile teams. Built with:
 - Real-time updates using WebSockets

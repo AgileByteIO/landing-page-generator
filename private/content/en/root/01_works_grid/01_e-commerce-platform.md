@@ -5,7 +5,7 @@ pubDate: 2024-01-15
 author: "Mario"
 ---
 
-# E-Commerce Platform
+## E-Commerce Platform
 
 A modern e-commerce solution built with Next.js and Stripe integration. Features include:
 - Product catalog with search and filters

@@ -1,0 +1,146 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'landingpage'>;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="article">
+  <header class="article-head">
+    <h1 class="article-title">{post.data.title}</h1>
+    {
+      post.data.description && (
+        <p class="article-summary">{post.data.description}</p>
+      )
+    }
+  </header>
+  <div class="article-content">
+    <slot />
+  </div>
+</article>
+
+<style>
+  .article {
+    width: 100%;
+    max-width: 85rem;
+    margin: 0 auto;
+  }
+
+  .article-head {
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+  }
+
+  .article-content {
+    padding: 0 2rem;
+  }
+
+  .article-title {
+    background: linear-gradient(
+      135deg,
+      var(--secondary) 0%,
+      var(--primary) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .article-summary {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    max-width: 65ch;
+  }
+
+  .article-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .article-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .article-content :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .article-content :global(a:hover) {
+    opacity: 0.8;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  .article-content :global(code) {
+    background: var(--foreground);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .article-content :global(pre) {
+    background: var(--primary);
+    color: var(--background);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(hr) {
+    border: none;
+    border-top: 1px solid --var(--background);
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 1366px) {
+    .article-head {
+      padding: 0 1rem;
+    }
+    .article-content {
+      padding: 0 1rem;
+    }
+    .article {
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .article-title {
+      font-size: 1.5rem;
+    }
+
+    .article-summary {
+      font-size: 1rem;
+    }
+  }
+</style>

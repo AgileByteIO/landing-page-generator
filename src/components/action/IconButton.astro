@@ -3,6 +3,7 @@ import FeatherIcon from '../ui/FeatherIcon.astro';
 
 interface Props {
   icon: string;
+  id?: string;
   iconSize?: number;
   style?: 'default' | 'outline' | 'ghost';
   type?: 'button' | 'link';
@@ -14,6 +15,7 @@ interface Props {
 
 const {
   icon,
+  id = Math.random().toString(36).substr(2, 9),
   iconSize = 20,
   style = 'default',
   type = 'button',
@@ -29,6 +31,7 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
 {type === 'link' ? (
   <a
     href={href}
+    id={id}
     target={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? '_blank' : undefined) : undefined}
     rel={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? 'noopener noreferrer' : undefined) : undefined}
     class:list={['icon-btn', `icon-btn-${style}`, className]}
@@ -38,6 +41,7 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
   </a>
 ) : (
   <button
+    id={id}
     type="button"
     onclick={onClick}
     class:list={['icon-btn', `icon-btn-${style}`, className]}
