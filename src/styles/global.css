@@ -78,16 +78,16 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
 }
 
 h1, .h1 {
-  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-size: clamp(1.44rem, 3.24vw, 2.43rem);
   font-weight: 800;
 }
 
 h2, .h2 {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-size: clamp(1.215rem, 2.43vw, 1.8rem);
 }
 
 h3, .h3 {
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-size: clamp(1rem, 2vw, 1.44rem);
 }
 
 h4, .h4 {
@@ -101,16 +101,64 @@ h4, .h4 {
 
 /* Responsive heading adjustments */
 @media (max-width: 768px) {
-  h1, .h1 { font-size: 1.75rem; }
-  h2, .h2 { font-size: 1.375rem; }
-  h2, .h2 { font-size: 1.25rem; padding-left: 0.25rem; padding-bottom: 0.5rem; }
-  h3, .h3 { font-size: 1.25rem;}
-  h4, .h4 { font-size: 1.125rem; }
+  h1, .h1 { font-size: 1.44rem; }
+  h2, .h2 { font-size: 1.125rem; padding-left: 0.25rem; padding-bottom: 0.5rem; }
+  h3, .h3 { font-size: 1rem; }
+  h4, .h4 { font-size: 1rem; }
 }
 
 @media (max-width: 480px) {
-  h1, .h1 { font-size: 1.5rem; }
-  h2, .h2 { font-size: 1.25rem; padding-left: 0.25rem; padding-bottom: 0.5rem; }
-  h3, .h3 { font-size: 1.125rem; }
-  h4, .h4 { font-size: 1rem; }
+  h1, .h1 { font-size: 1.2rem; }
+  h2, .h2 { font-size: 1rem; padding-left: 0.25rem; padding-bottom: 0.5rem; }
+  h3, .h3 { font-size: 0.9rem; }
+  h4, .h4 { font-size: 0.8rem; }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--secondary);
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: var(--accent);
+  color: var(--secondary);
+  text-shadow: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+::-moz-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-moz-scrollbar-track {
+  background: var(--background);
+}
+
+::-moz-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-moz-scrollbar-thumb:hover {
+  background: var(--accent);
 }

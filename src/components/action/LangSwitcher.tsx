@@ -71,7 +71,7 @@ export default function LangSwitcher({ supportedLanguages, defaultLang = 'en' }:
     );
   }
 
-  return (
+return (
     <>
       <select
         id="lang-switcher"
@@ -80,49 +80,67 @@ export default function LangSwitcher({ supportedLanguages, defaultLang = 'en' }:
         className="lang-switcher"
       >
         {supportedLanguages.map(l => (
-          <option className="lang-switcher-option" id={l} key={l} value={l}>
+          <option id={l} key={l} value={l}>
             {l.toUpperCase()}
           </option>
         ))}
       </select>
       <style>{`
         .lang-switcher {
-          padding: 0.5rem 0.75rem;
-          font-size: 0.875rem;
+          font-size: 0.95rem;
           font-weight: 500;
-          border: 3px solid transparent;
-          background: transparent;
           color: var(--secondary);
+          background: transparent;
+          padding: 0.5rem 1.75rem 0.5rem 0;
+          border: none;
+          border-bottom: 2px solid transparent;
           cursor: pointer;
           transition: all 0.2s ease;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 0.5rem center;
-          padding-right: 1.75rem;
+          appearance: base-select;
+          width: fit-content;
         }
+
         .lang-switcher:hover {
-          border-bottom: 3px solid var(--primary);
+          border-bottom-color: var(--primary);
           color: var(--primary);
-          background-color: transparent;
         }
+
         .lang-switcher:focus {
           outline: none;
-          background-color: transparent;
+          border-bottom-color: transparent;
         }
 
-        .lang-switcher-option {
+        .lang-switcher::picker(select) {
+          width: fit-content;
           background-color: var(--background);
+          color: var(--secondary);
+          border: 2px solid var(--primary);
+          border-radius: 0.5rem;
+          padding: 0.25rem;
         }
 
-        .lang-switcher .lang-switcher-option:hover {
-          background-color: var(--primary);
+        .lang-switcher::picker(option) {
+          padding: 0.5rem 1rem;
+          background-color: var(--background);
+          color: var(--secondary);
+          border-radius: 0.25rem;
+        }
+
+        .lang-switcher::picker(option:checked) {
+          background-color: var(--primary) !important;
+          color: var(--background) !important;
+        }
+
+        .lang-switcher::picker(option:hover) {
+          background-color: var(--primary) !important;
+          color: var(--background) !important;
         }
 
         @media (max-width: 768px) {
           .lang-switcher {
             width: 100%;
             text-align: left;
+            padding: 0.75rem 0;
           }
         }
       `}</style>

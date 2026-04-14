@@ -13,15 +13,15 @@ interface Props {
 const { companyName = 'Company Name' } = Astro.props;
 
 const allContent = await getCollection('landingpage');
+
 const documents: DocItem[] = allContent
   .filter(post => post.id.startsWith('en/documents/'))
   .map(post => {
     const parts = post.id.split('/');
-    const fileName = parts[2].replace(/\.md$/, '');
-    const folderName = parts[1];
+    const fileNameWithPrefix = parts[2].replace(/\.md$/, '');
     return {
       title: post.data.title,
-      href: `/${parts[0]}/${folderName}/${fileName}`
+      href: `/${parts[0]}/${fileNameWithPrefix}`
     };
   });
 ---
@@ -33,11 +33,19 @@ const documents: DocItem[] = allContent
         {documents.map(doc => (
           <a href={doc.href} class="footer-link">{doc.title}</a>
         ))}
+        <button id="cookie-policy-btn" class="footer-link-btn">Cookie Policy</button>
       </nav>
     )}
     <p class="footer-copyright">&copy; {new Date().getFullYear()} {companyName}. All rights reserved.</p>
   </div>
 </footer>
+
+<script>
+  document.getElementById('cookie-policy-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('open-cookie-modal'));
+  });
+</script>
 
 <style>
   .footer {
@@ -61,14 +69,18 @@ const documents: DocItem[] = allContent
     flex-wrap: wrap;
   }
 
-  .footer-link {
+  .footer-link, .footer-link-btn {
     color: white;
     text-decoration: none;
     opacity: 0.8;
     transition: opacity 0.2s ease;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
   }
 
-  .footer-link:hover {
+  .footer-link:hover, .footer-link-btn:hover {
     opacity: 1;
     text-decoration: underline;
   }

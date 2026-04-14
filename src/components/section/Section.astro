@@ -24,7 +24,7 @@ const items = filteredPosts.map((post) => {
   const postParts = post.id.split('/');
   const rootFolder = postParts[1];
   const folderName = postParts[2];
-  const fileNameWithPrefix = postParts[3].replace(/\.md$/, '');
+  const fileNameWithPrefix = postParts[3]?.replace(/\.md$/, '') || '';
   const fileName = fileNameWithPrefix.replace(/^\d+_/, '');
   const folderParts = folderName.split('_');
   const sectionName = folderParts.slice(1, -1).join('-');
@@ -36,6 +36,7 @@ const items = filteredPosts.map((post) => {
     title: post.data.title,
     description: post.data.description || '',
     author: post.data.author || '',
+    link: post.data.link || '',
     href,
   };
 });
@@ -47,7 +48,9 @@ const folderParts = pathParts[2]?.split('_') || [];
 const sectionName = folderParts.slice(1, -1).join('-');
 const indexHref = `/${lang}/${sectionName}`;
 
-const heroHref = items.length === 1 ? indexHref : items[0]?.href;
+const isHeroFolder = normalizedFolder.includes('00_about_hero');
+
+const heroLink = isHeroFolder ? items[0].link : (items.length === 1 ? indexHref : items[0]?.href);
 ---
 
 {items.length === 0 && <p>No content found</p>}
@@ -57,7 +60,7 @@ const heroHref = items.length === 1 ? indexHref : items[0]?.href;
     title={items[0].title} 
     description={items[0].description} 
     author={items[0].author} 
-    href={heroHref} 
+    link={heroLink} 
   />
 )}
 

@@ -12,9 +12,10 @@ type PathProps = { title: string; folder: string; items: { title: string; descri
 export async function getStaticPaths() {
   const posts = await getCollection("landingpage");
 
-  const filteredPosts = posts.filter((p: CollectionEntry<"landingpage">) =>
-    p.id.includes("/"),
-  );
+  const filteredPosts = posts.filter((p: CollectionEntry<"landingpage">) => {
+    const parts = p.id.split("/");
+    return parts.length === 4 && parts[1] === "root";
+  });
 
   const folderGroups = new Map<string, CollectionEntry<"landingpage">[]>();
   filteredPosts.forEach((post) => {
@@ -31,35 +32,28 @@ export async function getStaticPaths() {
   const paths: { params: PathParams; props: PathProps }[] = [];
 
   for (const [folderKey, folderPosts] of folderGroups) {
-    const [lang, rootFolder, folderName] = folderKey.split("/");
-    const isRoot = rootFolder === "root";
+    // Skip single article folders
+    if (folderPosts.length <= 1) continue;
 
+    const lang = folderKey.split("/")[0];
     let folderSlug: string;
     let folderTitle: string;
     
-    if (isRoot) {
-      const folderParts = folderName.split("_");
+    {
+      const folderParts = folderKey.split("/")[2].split("_");
       folderSlug = folderParts.slice(1, -1).join("-");
       folderTitle = folderParts.slice(1, -1).join(" ").replace(/([A-Z])/g, " $1").trim();
       folderTitle = folderTitle.charAt(0).toUpperCase() + folderTitle.slice(1);
-    } else {
-      folderSlug = folderName;
-      folderTitle = folderName.charAt(0).toUpperCase() + folderName.slice(1);
     }
 
     const items = folderPosts.map((post) => {
       const idParts = post.id.split("/");
-      const depth = idParts.length;
-      const fileNameWithPrefix = depth > 3 
-        ? idParts[3]?.replace(/\.md$/, "") 
-        : idParts[2]?.replace(/\.md$/, "") || "";
+      const fileNameWithPrefix = idParts[3]?.replace(/\.md$/, "") || "";
       const itemSlug = fileNameWithPrefix.replace(/^\d+_/, "");
       return {
         title: post.data.title,
         description: post.data.description,
-        href: folderPosts.length === 1 
-          ? `/${lang}/${folderSlug}` 
-          : `/${lang}/${folderSlug}/${itemSlug}`,
+        href: `/${lang}/${folderSlug}/${itemSlug}`,
       };
     });
 

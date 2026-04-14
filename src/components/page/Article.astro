@@ -64,11 +64,12 @@ const { post } = Astro.props;
   .article-content :global(ul),
   .article-content :global(ol) {
     margin-bottom: 1rem;
-    padding-left: 1.5rem;
+    padding: 0 0 0 1.5rem;
   }
 
   .article-content :global(li) {
     margin-bottom: 0.5rem;
+    padding: 0 0 0 0;
   }
 
   .article-content :global(a) {
@@ -114,6 +115,34 @@ const { post } = Astro.props;
     height: auto;
     border-radius: 0.5rem;
     margin: 1.5rem 0;
+  }
+
+  .article-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  .article-content :global(th),
+  .article-content :global(td) {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid var(--primary);
+  }
+
+  .article-content :global(th) {
+    background: var(--primary);
+    color: var(--background);
+    font-weight: 600;
+  }
+
+  .article-content :global(tr:nth-child(even)) {
+    background: rgba(var(--foreground-rgb, 100, 116, 139), 0.05);
+  }
+
+  .article-content :global(tr:hover) {
+    background: rgba(var(--primary-rgb, 37, 99, 235), 0.08);
   }
 
   .article-content :global(hr) {

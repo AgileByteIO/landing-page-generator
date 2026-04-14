@@ -14,6 +14,8 @@ const landingpage = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     author: z.string().default('Anonymous'),
+    link: z.string().optional(),
+    mandatory: z.boolean().optional(),
   }),
 });
 

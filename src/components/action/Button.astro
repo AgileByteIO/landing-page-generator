@@ -6,9 +6,11 @@ interface Props {
   icon?: string;
   iconPosition?: 'left' | 'right';
   iconSize?: number;
-  style?: 'default' | 'outline' | 'ghost';
+  style?: 'default' | 'outline' | 'ghost' | 'accent';
   type?: 'button' | 'link';
   href?: string;
+  target?: string;
+  rel?: string;
   onClick?: string;
   class?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -23,6 +25,8 @@ const {
   style = 'default',
   type = 'button',
   href = '#',
+  target,
+  rel,
   onClick,
   class: className,
   size = 'md',
@@ -36,8 +40,8 @@ const borderRadius = import.meta.env.BORDER_RADIUS || '6px';
 {type === 'link' ? (
   <a
     href={href}
-    target={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? '_blank' : undefined) : undefined}
-    rel={href.startsWith('http://') || href.startsWith('https://') ? (new URL(href).hostname !== Astro.site?.hostname ? 'noopener noreferrer' : undefined) : undefined}
+    target={target}
+    rel={rel}
     class:list={['btn', `btn-${style}`, size ? `btn-${size}` : '', className]}
     aria-label={ariaLabel}
   >
@@ -122,6 +126,18 @@ const borderRadius = import.meta.env.BORDER_RADIUS || '6px';
 
   .btn-ghost:hover {
     background-color: rgba(37, 99, 235, 0.1);
+  }
+
+  .btn-accent {
+    background-color: var(--accent);
+    color: var(--background);
+    border-color: var(--accent);
+  }
+
+  .btn-accent:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb, 234, 88, 12), 0.3);
   }
 
   .btn-label {
