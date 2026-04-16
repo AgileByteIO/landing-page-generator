@@ -1,6 +1,4 @@
-'use client';
-
-import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { createSignal, createEffect, onMount, onCleanup, For, Show } from 'solid-js';
 import type { CollectionEntry } from 'astro:content';
 
 interface CookieConsent {
@@ -14,22 +12,23 @@ interface Props {
   cookies: CollectionEntry<'landingpage'>[];
 }
 
-interface CookieConsentRef {
-  openModal: () => void;
-}
-
 const COOKIE_NAME = 'cookie-consents';
 
-const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent({ cookies }, ref) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [consents, setConsents] = useState<Record<string, boolean>>({});
-  const [isLoaded, setIsLoaded] = useState(false);
+export default function CookieConsent(props: Props) {
+  const [isOpen, setIsOpen] = createSignal(false);
+  const [consents, setConsents] = createSignal<Record<string, boolean>>({});
+  const [isLoaded, setIsLoaded] = createSignal(false);
 
-  useImperativeHandle(ref, () => ({
-    openModal: () => setIsOpen(true)
-  }));
+  const cookieItems: CookieConsent[] = props.cookies
+    .filter((c) => c.id.includes('/cookie-consents/'))
+    .map((c) => ({
+      id: c.id,
+      title: c.data.title,
+      description: c.data.description,
+      mandatory: c.data.mandatory || false,
+    }));
 
-  useEffect(() => {
+  onMount(() => {
     const savedConsents = localStorage.getItem(COOKIE_NAME);
     if (savedConsents) {
       try {
@@ -42,91 +41,82 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
       setIsOpen(true);
     }
     setIsLoaded(true);
-  }, []);
 
-  useEffect(() => {
     const handleOpenCookieModal = () => setIsOpen(true);
     window.addEventListener('open-cookie-modal', handleOpenCookieModal);
-    return () => window.removeEventListener('open-cookie-modal', handleOpenCookieModal);
-  }, []);
+    onCleanup(() => window.removeEventListener('open-cookie-modal', handleOpenCookieModal));
+  });
 
-  const cookieItems: CookieConsent[] = cookies
-    .filter((c) => c.id.includes('/cookie-consents/'))
-    .map((c) => ({
-      id: c.id,
-      title: c.data.title,
-      description: c.data.description,
-      mandatory: c.data.mandatory || false,
-    }));
+  createEffect(() => {
+    if (!isLoaded()) return;
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (Object.keys(consents).length === 0) {
+    const currentConsents = consents();
+    if (Object.keys(currentConsents).length === 0) {
       const initial: Record<string, boolean> = {};
       cookieItems.forEach((item) => {
         initial[item.id] = item.mandatory;
       });
       setConsents(initial);
     }
-  }, [isLoaded, cookieItems]);
+  });
 
   const handleToggle = (id: string) => {
-    if (cookieItems.find((c) => c.id === id)?.mandatory) return;
+    const item = cookieItems.find((c) => c.id === id);
+    if (item?.mandatory) return;
     setConsents((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleSave = () => {
-    const encoded = btoa(JSON.stringify(consents));
+    const encoded = btoa(JSON.stringify(consents()));
     localStorage.setItem(COOKIE_NAME, encoded);
     setIsOpen(false);
   };
 
-  if (!isLoaded) return null;
-
   return (
     <>
-      {isOpen && (
-        <div className="cookie-modal-overlay">
-          <div className="cookie-modal">
-            <div className="cookie-header">
+      <Show when={isOpen()}>
+        <div class="cookie-modal-overlay">
+          <div class="cookie-modal">
+            <div class="cookie-header">
               <h2>Cookie Preferences</h2>
               <p>Manage your cookie settings. Essential cookies cannot be disabled.</p>
             </div>
 
-            <div className="cookie-content">
-              <div className="cookie-list">
-                {cookieItems.map((item) => (
-                  <div key={item.id} className="cookie-item">
-                    <div className="cookie-info">
-                      <span className="cookie-title">
+            <div class="cookie-content">
+              <div class="cookie-list">
+                <For each={cookieItems}>{(item) => (
+                  <div class="cookie-item">
+                    <div class="cookie-info">
+                      <span class="cookie-title">
                         {item.title}
-                        {item.mandatory && <span className="cookie-badge">Required</span>}
+                        <Show when={item.mandatory}>
+                          <span class="cookie-badge">Required</span>
+                        </Show>
                       </span>
-                      <span className="cookie-description">{item.description}</span>
+                      <span class="cookie-description">{item.description}</span>
                     </div>
-                    <label className="cookie-toggle">
+                    <label class="cookie-toggle">
                       <input
                         type="checkbox"
-                        checked={consents[item.id] || false}
+                        checked={consents()[item.id] || false}
                         onChange={() => handleToggle(item.id)}
                         disabled={item.mandatory}
                       />
-                      <span className="toggle-slider"></span>
+                      <span class="toggle-slider"></span>
                     </label>
                   </div>
-                ))}
+                )}</For>
               </div>
             </div>
 
-            <div className="cookie-footer">
-              <button onClick={handleSave} className="cookie-save-btn">
+            <div class="cookie-footer">
+              <button onClick={handleSave} class="cookie-save-btn">
                 Save Preferences
               </button>
             </div>
           </div>
         </div>
-      )}
+      </Show>
 
       <style>{`
         .cookie-modal-overlay {
@@ -135,7 +125,7 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
           left: 0;
           right: 0;
           top: 0;
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(0 0 0 / 0.5);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -144,32 +134,33 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
         }
 
         .cookie-modal {
-          background: var(--background, #fff);
-          border-radius: 1rem;
+          background: var(--background);
+          border-radius: var(--border-radius);
           max-width: 500px;
           width: 100%;
           max-height: 90vh;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+          box-shadow: var(--box-shadow), 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .cookie-header {
           padding: 1.5rem;
-          border-bottom: 1px solid var(--border-color, #e2e8f0);
+          border-bottom: var(--border-width) solid oklch(from var(--secondary) 0.5 c);
           flex-shrink: 0;
         }
 
         .cookie-header h2 {
           margin: 0 0 0.5rem 0;
           font-size: 1.25rem;
-          color: var(--secondary, #1e293b);
+          color: var(--secondary);
         }
 
         .cookie-header p {
           margin: 0;
           font-size: 0.875rem;
-          color: var(--text-muted, #64748b);
+          color: var(--secondary);
+          opacity: 0.7;
         }
 
         .cookie-content {
@@ -186,7 +177,7 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
           justify-content: space-between;
           align-items: center;
           padding: 1rem 0;
-          border-bottom: 1px solid var(--border-color, #e2e8f0);
+          border-bottom: var(--border-width) solid oklch(from var(--secondary) 0.5 c);
         }
 
         .cookie-item:last-child {
@@ -203,22 +194,23 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
           align-items: center;
           gap: 0.5rem;
           font-weight: 600;
-          color: var(--secondary, #1e293b);
+          color: var(--secondary);
           margin-bottom: 0.25rem;
         }
 
         .cookie-badge {
           font-size: 0.625rem;
           padding: 0.125rem 0.375rem;
-          background: var(--primary, #2563eb);
-          color: white;
+          background: var(--primary);
+          color: var(--background);
           border-radius: 9999px;
           font-weight: 500;
         }
 
         .cookie-description {
           font-size: 0.8rem;
-          color: var(--text-muted, #64748b);
+          color: var(--secondary);
+          opacity: 0.7;
           line-height: 1.4;
         }
 
@@ -240,7 +232,7 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
           position: absolute;
           cursor: pointer;
           inset: 0;
-          background-color: var(--border-color, #cbd5e1);
+          background-color: oklch(from var(--secondary) 0.7 c);
           border-radius: 26px;
           transition: 0.3s;
         }
@@ -252,14 +244,14 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
           width: 20px;
           left: 3px;
           bottom: 3px;
-          background-color: white;
+          background-color: var(--background);
           border-radius: 50%;
           transition: 0.3s;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .cookie-toggle input:checked + .toggle-slider {
-          background-color: var(--primary, #2563eb);
+          background-color: var(--primary);
         }
 
         .cookie-toggle input:checked + .toggle-slider:before {
@@ -267,7 +259,7 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
         }
 
         .cookie-toggle input:disabled + .toggle-slider {
-          background-color: var(--primary, #2563eb);
+          background-color: var(--primary);
           cursor: not-allowed;
         }
 
@@ -283,10 +275,10 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
         .cookie-save-btn {
           width: 100%;
           padding: 0.875rem 1.5rem;
-          background: var(--primary, #2563eb);
-          color: white;
+          background: var(--primary);
+          color: var(--background);
           border: none;
-          border-radius: 0.5rem;
+          border-radius: var(--border-radius);
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
@@ -294,7 +286,7 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
         }
 
         .cookie-save-btn:hover {
-          background: var(--primary-dark, #1d4ed8);
+          filter: brightness(1.1);
           transform: translateY(-1px);
         }
 
@@ -310,6 +302,4 @@ const CookieConsent = forwardRef<CookieConsentRef, Props>(function CookieConsent
       `}</style>
     </>
   );
-});
-
-export default CookieConsent;
+}

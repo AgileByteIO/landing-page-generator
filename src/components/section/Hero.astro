@@ -11,7 +11,7 @@ interface Props {
   background?: string;
 }
 
-const { id, title, description, author, link, size = 'lg', background = '' } = Astro.props;
+const { id, title, description, author, link, size = 'full', background = '' } = Astro.props;
 
 const sizeClasses = {
   sm: 'hero-sm',
@@ -164,7 +164,7 @@ const iconName = isMailto ? 'mail' : 'arrow-right';
   }
 
   @media (max-width: 40rem) {
-    .hero {
+    .hero-content {
       margin-top: clamp(1.5rem, 4vw, 2.5rem);
     }
     .hero-sm { min-height: 10rem; }

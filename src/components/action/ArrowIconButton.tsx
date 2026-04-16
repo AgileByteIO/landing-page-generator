@@ -1,4 +1,4 @@
-import React from 'react';
+import { Match, Switch } from 'solid-js';
 
 interface ArrowIconButtonProps {
   icon: 'up' | 'down' | 'left' | 'right';
@@ -10,107 +10,65 @@ interface ArrowIconButtonProps {
   'aria-label': string;
 }
 
-const icons: Record<string, React.JSX.Element> = {
-  'up': (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" y1="19" x2="12" y2="5"></line>
-      <polyline points="5 12 12 5 19 12"></polyline>
-    </svg>
-  ),
-  'down': (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <polyline points="19 12 12 19 5 12"></polyline>
-    </svg>
-  ),
-  'left': (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-  ),
-  'right': (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-      <polyline points="12 5 19 12 12 19"></polyline>
-    </svg>
-  ),
-};
-
-export default function ArrowIconButton({
-  icon,
-  style = 'default',
-  onClick,
-  href,
-  type = 'button',
-  className = '',
-  'aria-label': ariaLabel,
-}: ArrowIconButtonProps) {
-  const classes = `btn btn-icon btn-${style} ${className}`.trim();
-  const iconElement = icons[icon];
-
-  if (type === 'link' && href) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes}
-        aria-label={ariaLabel}
-      >
-        {iconElement}
-      </a>
-    );
-  }
+const ArrowIconButton = (props: ArrowIconButtonProps) => {
+  const classes = `btn btn-icon btn-${props.style || 'default'} ${props.className || ''}`.trim();
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={classes}
-      aria-label={ariaLabel}
-    >
-      {iconElement}
-    </button>
+    <Switch>
+      <Match when={props.type === 'link' && props.href}>
+        <a
+          href={props.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={classes}
+          aria-label={props['aria-label']}
+        >
+          <ArrowIcon icon={props.icon} />
+        </a>
+      </Match>
+      <Match when={true}>
+        <button
+          type="button"
+          onClick={props.onClick}
+          class={classes}
+          aria-label={props['aria-label']}
+        >
+          <ArrowIcon icon={props.icon} />
+        </button>
+      </Match>
+    </Switch>
   );
-}
+};
+
+const ArrowIcon = (props: { icon: 'up' | 'down' | 'left' | 'right' }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <Switch>
+        <Match when={props.icon === 'up'}>
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </Match>
+        <Match when={props.icon === 'down'}>
+          <path d="M12 5v14M19 12l-7 7-7-7" />
+        </Match>
+        <Match when={props.icon === 'left'}>
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </Match>
+        <Match when={props.icon === 'right'}>
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </Match>
+      </Switch>
+    </svg>
+  );
+};
+
+export default ArrowIconButton;

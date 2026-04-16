@@ -19,7 +19,9 @@ export async function getStaticPaths() {
     
     if (parts.length === 3 && (parts[1] === "documents" || parts[1] === "cookie-consents")) {
       const [lang, folderName, fileName] = parts;
-      const slug = fileName.replace(/\.md$/, "");
+      const fileNameNoExt = fileName.replace(/\.md$/, "");
+      const slugParts = fileNameNoExt.split("_");
+      const slug = slugParts.slice(1).join("-");
       
       const { Content: PostContent } = await render(post);
       

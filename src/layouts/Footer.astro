@@ -19,9 +19,11 @@ const documents: DocItem[] = allContent
   .map(post => {
     const parts = post.id.split('/');
     const fileNameWithPrefix = parts[2].replace(/\.md$/, '');
+    const slugParts = fileNameWithPrefix.split("_");
+    const slug = slugParts.slice(1).join("-");
     return {
       title: post.data.title,
-      href: `/${parts[0]}/${fileNameWithPrefix}`
+      href: `/${parts[0]}/${slug}`
     };
   });
 ---

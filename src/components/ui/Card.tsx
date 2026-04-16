@@ -1,4 +1,4 @@
-import React from 'react';
+import { Show } from 'solid-js';
 
 interface CardProps {
   title: string;
@@ -7,13 +7,17 @@ interface CardProps {
   href: string;
 }
 
-export default function Card({ title, description, author, href }: CardProps) {
+export default function Card(props: CardProps) {
   return (
-    <div className="card-wrapper">
-      <a href={href} className="card">
-        <h3>{title}</h3>
-        {description && <p>{description}</p>}
-        {author && <small>By {author}</small>}
+    <div class="card-wrapper">
+      <a href={props.href} class="card">
+        <h3>{props.title}</h3>
+        <Show when={props.description}>
+          <p>{props.description}</p>
+        </Show>
+        <Show when={props.author}>
+          <small>By {props.author}</small>
+        </Show>
       </a>
     </div>
   );
