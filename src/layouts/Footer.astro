@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { tWithLang } from '../lib/i18n';
 
 interface DocItem {
   title: string;
@@ -8,9 +9,21 @@ interface DocItem {
 
 interface Props {
   companyName?: string;
+  legalAddress?: string;
+  vatNo?: string;
 }
 
-const { companyName = 'Company Name' } = Astro.props;
+const { companyName = 'Company Name', legalAddress = '', vatNo = '' } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
+const lang = langMatch ? langMatch[1] : 'en';
+
+const cookiePolicyText = tWithLang(lang, 'footer.cookie_policy');
+const copyrightSuffix = tWithLang(lang, 'footer.copyright_suffix');
+const vatPrefix = tWithLang(lang, 'footer.vat_prefix');
+const currentYear = new Date().getFullYear();
+const copyrightText = tWithLang(lang, 'dynamic.copyright', currentYear, companyName);
 
 const allContent = await getCollection('landingpage');
 
@@ -35,10 +48,12 @@ const documents: DocItem[] = allContent
         {documents.map(doc => (
           <a href={doc.href} class="footer-link">{doc.title}</a>
         ))}
-        <button id="cookie-policy-btn" class="footer-link-btn">Cookie Policy</button>
+        <button id="cookie-policy-btn" class="footer-link-btn">{cookiePolicyText}</button>
       </nav>
     )}
-    <p class="footer-copyright">&copy; {new Date().getFullYear()} {companyName}. All rights reserved.</p>
+    <p class="footer-copyright">&copy; {copyrightText}</p>
+    {legalAddress && <p class="footer-legal">{legalAddress}</p>}
+    {vatNo && <p class="footer-vat">{vatPrefix} {vatNo}</p>}
   </div>
 </footer>
 
@@ -90,6 +105,12 @@ const documents: DocItem[] = allContent
   .footer-copyright {
     opacity: 0.7;
     font-size: 0.875rem;
+  }
+
+  .footer-legal, .footer-vat {
+    opacity: 0.6;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
   }
 
   @media (max-width: 640px) {

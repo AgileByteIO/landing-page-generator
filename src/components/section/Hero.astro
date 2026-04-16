@@ -1,17 +1,22 @@
 ---
+import { tWithLang } from '../../lib/i18n';
 import Button from '../action/Button.astro';
 
 interface Props {
   id?: string;
   title: string;
   description?: string;
-  author?: string;
   link?: string;
   size?: 'sm' | 'md' | 'lg' | 'full';
   background?: string;
 }
 
-const { id, title, description, author, link, size = 'full', background = '' } = Astro.props;
+const { id, title, description, link, size = 'full', background = '' } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
+const lang = langMatch ? langMatch[1] : 'en';
+const readMoreText = tWithLang(lang, 'hero.read_more');
 
 const sizeClasses = {
   sm: 'hero-sm',
@@ -41,7 +46,7 @@ const iconName = isMailto ? 'mail' : 'arrow-right';
           <Button 
             type="link" 
             href={link} 
-            label="Read more" 
+            label={readMoreText} 
             icon={iconName} 
             iconPosition="right"
             style="accent"

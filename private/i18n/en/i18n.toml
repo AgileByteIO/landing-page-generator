@@ -1,0 +1,24 @@
+# English Translations
+
+[carousel]
+view_details = "View details"
+
+[common]
+redirecting = "Redirecting..."
+
+[cookies]
+title = "Cookie Preferences"
+description = "Manage your cookie settings. Essential cookies cannot be disabled."
+required_badge = "Required"
+save_button = "Save Preferences"
+
+[hero]
+read_more = "Read more"
+
+[footer]
+cookie_policy = "Cookie Policy"
+copyright_suffix = "All rights reserved."
+vat_prefix = "VAT:"
+
+[dynamic]
+copyright = "{0} {1}. All rights reserved."

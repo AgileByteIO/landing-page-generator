@@ -1,0 +1,24 @@
+# German Translations
+
+[carousel]
+view_details = "Details ansehen"
+
+[common]
+redirecting = "Wird weitergeleitet..."
+
+[cookies]
+title = "Cookie-Einstellungen"
+description = "Verwalten Sie Ihre Cookie-Einstellungen. Essentielle Cookies können nicht deaktiviert werden."
+required_badge = "Erforderlich"
+save_button = "Einstellungen speichern"
+
+[hero]
+read_more = "Mehr lesen"
+
+[footer]
+cookie_policy = "Cookie-Richtlinie"
+copyright_suffix = "Alle Rechte vorbehalten."
+vat_prefix = "USt-ID:"
+
+[dynamic]
+copyright = "{0} {1}. Alle Rechte vorbehalten."

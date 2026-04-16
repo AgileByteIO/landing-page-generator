@@ -4,7 +4,6 @@ import FeatherIcon from '../ui/FeatherIcon.astro';
 interface GridItem {
   title: string;
   description?: string;
-  author?: string;
   href: string;
 }
 
@@ -27,7 +26,6 @@ const { id, title, items, background = '' } = Astro.props;
           <div class="card-inner">
             <h3>{item.title}</h3>
             {item.description && <p class="card-description">{item.description}</p>}
-            {item.author && <small class="card-author">By {item.author}</small>}
             <span class="card-arrow">
               <FeatherIcon name="arrow-right" size="20" />
             </span>
@@ -102,14 +100,6 @@ const { id, title, items, background = '' } = Astro.props;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .card-author {
-    color: var(--accent);
-    font-style: italic;
-    font-size: 0.875rem;
-    margin-top: 1rem;
-    display: block;
   }
 
   .card-arrow {

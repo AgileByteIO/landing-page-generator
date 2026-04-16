@@ -1,10 +1,10 @@
 import { createSignal, onMount, onCleanup, For, Show } from 'solid-js';
 import FeatherIcon from '../ui/FeatherIcon';
+import { getCurrentLang, t } from '../../lib/i18n';
 
 interface CarouselItem {
   title: string;
   description?: string;
-  author?: string;
   href: string;
 }
 
@@ -16,6 +16,9 @@ interface CarouselProps {
 }
 
 export default function Carousel(props: CarouselProps) {
+  const lang = getCurrentLang();
+  const viewDetailsText = () => t('carousel.view_details');
+  
   const [currentIndex, setCurrentIndex] = createSignal(0);
   const [isAnimating, setIsAnimating] = createSignal(false);
   const [direction, setDirection] = createSignal<'next' | 'prev'>('next');
@@ -90,11 +93,8 @@ export default function Carousel(props: CarouselProps) {
                       <Show when={item.description}>
                         <p class="carousel-card-description">{item.description}</p>
                       </Show>
-                      <Show when={item.author}>
-                        <small class="carousel-card-author">By {item.author}</small>
-                      </Show>
                       <span class="carousel-card-cta">
-                        View details
+                        {viewDetailsText()}
                         <FeatherIcon name="arrow-right" size={16} />
                       </span>
                     </div>
@@ -206,13 +206,6 @@ export default function Carousel(props: CarouselProps) {
               -webkit-line-clamp: 3;
               -webkit-box-orient: vertical;
               overflow: hidden;
-            }
-
-            .carousel-card-author {
-              color: var(--accent);
-              font-style: italic;
-              font-size: 0.875rem;
-              margin-bottom: 1rem;
             }
 
             .carousel-card-cta {

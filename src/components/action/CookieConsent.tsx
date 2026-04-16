@@ -1,5 +1,6 @@
 import { createSignal, createEffect, onMount, onCleanup, For, Show } from 'solid-js';
 import type { CollectionEntry } from 'astro:content';
+import { getCurrentLang, t } from '../../lib/i18n';
 
 interface CookieConsent {
   id: string;
@@ -15,6 +16,13 @@ interface Props {
 const COOKIE_NAME = 'cookie-consents';
 
 export default function CookieConsent(props: Props) {
+  const lang = getCurrentLang();
+  
+  const titleText = () => t('cookies.title');
+  const descText = () => t('cookies.description');
+  const requiredBadge = () => t('cookies.required_badge');
+  const saveButtonText = () => t('cookies.save_button');
+  
   const [isOpen, setIsOpen] = createSignal(false);
   const [consents, setConsents] = createSignal<Record<string, boolean>>({});
   const [isLoaded, setIsLoaded] = createSignal(false);
@@ -78,8 +86,8 @@ export default function CookieConsent(props: Props) {
         <div class="cookie-modal-overlay">
           <div class="cookie-modal">
             <div class="cookie-header">
-              <h2>Cookie Preferences</h2>
-              <p>Manage your cookie settings. Essential cookies cannot be disabled.</p>
+              <h2>{titleText()}</h2>
+              <p>{descText()}</p>
             </div>
 
             <div class="cookie-content">
@@ -90,7 +98,7 @@ export default function CookieConsent(props: Props) {
                       <span class="cookie-title">
                         {item.title}
                         <Show when={item.mandatory}>
-                          <span class="cookie-badge">Required</span>
+                          <span class="cookie-badge">{requiredBadge()}</span>
                         </Show>
                       </span>
                       <span class="cookie-description">{item.description}</span>
@@ -111,7 +119,7 @@ export default function CookieConsent(props: Props) {
 
             <div class="cookie-footer">
               <button onClick={handleSave} class="cookie-save-btn">
-                Save Preferences
+                {saveButtonText()}
               </button>
             </div>
           </div>
