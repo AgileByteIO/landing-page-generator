@@ -13,13 +13,13 @@ interface Props {
 const { title, items } = Astro.props;
 ---
 
-<section class="feed-section">
+<section>
   <div class="section-content">
-    {title && <h2>{title}</h2>}
+    {title && <h1>{title}</h1>}
     <div class="feed-list">
       {items.map((item) => (
         <a href={item.href} class="feed-card">
-          <h3 class="feed-title">{item.title}</h3>
+          <h2 class="feed-title">{item.title}</h2>
           {item.description && <p class="feed-description">{item.description}</p>}
         </a>
       ))}
@@ -28,12 +28,6 @@ const { title, items } = Astro.props;
 </section>
 
 <style>
-  .feed-section {
-    width: 100%;
-    max-width: 85rem;
-    margin: 0 auto;
-  }
-
   .feed-list {
     display: flex;
     flex-direction: column;
@@ -44,8 +38,8 @@ const { title, items } = Astro.props;
     display: block;
     padding: 1.5rem;
     background: var(--background);
-    border: var(--border-width, 1px) solid #e2e8f0;
-    border-radius: var(--border-radius, 8px);
+    border: var(--border-width) solid var(--card-border);
+    border-radius: var(--border-radius);
     text-decoration: none;
     color: inherit;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -54,7 +48,7 @@ const { title, items } = Astro.props;
   .feed-card:hover {
     border-color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--hover-shadow);
   }
 
   .feed-title {
@@ -64,7 +58,7 @@ const { title, items } = Astro.props;
 
   .feed-description {
     margin: 0;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.95rem;
     line-height: 1.6;
   }

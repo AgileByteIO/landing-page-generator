@@ -3,6 +3,8 @@ title: "E-Commerce Platform"
 description: "A full-featured online shopping platform with advanced inventory management and real-time analytics"
 pubDate: 2024-01-15
 author: "Mario"
+tags: ["featured", "fullstack"]
+'service-icon': "e-commerce"
 ---
 
 A modern e-commerce solution built with **Next.js** and **Stripe** integration. This platform provides a seamless shopping experience for customers while giving store owners powerful tools to manage their business.

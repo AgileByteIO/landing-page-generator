@@ -3,6 +3,7 @@ title: "Task Management App"
 description: "Collaborative project management tool with agile methodologies and real-time synchronization"
 pubDate: 2024-02-20
 author: "Mario"
+'service-icon': "software-development"
 ---
 
 ## Core Architecture

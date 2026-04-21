@@ -3,6 +3,7 @@ title: "Learning Management System"
 description: "Online education platform for courses with interactive learning and certification"
 pubDate: 2024-04-18
 author: "Mario"
+'service-icon': "software-development"
 ---
 
 A modern e-learning platform for creating and taking online courses. Built with scalability in mind, the system supports thousands of concurrent learners with smooth video streaming and interactive content delivery.

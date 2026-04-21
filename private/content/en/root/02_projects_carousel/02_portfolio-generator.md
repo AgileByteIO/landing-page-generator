@@ -3,6 +3,7 @@ title: "Portfolio Generator"
 description: "Automated portfolio website generator with themes and GitHub integration"
 pubDate: 2024-04-05
 author: "Mario"
+'domain-icon': "e-reading"
 ---
 
 An automated tool for developers to create stunning portfolio websites in minutes. No coding required—just choose a theme, connect your GitHub, and publish.

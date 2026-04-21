@@ -3,6 +3,7 @@ title: "Conference Event App"
 description: "Mobile app for conference attendees with scheduling and networking features"
 pubDate: 2024-06-22
 author: "Mario"
+'service-icon': "it-consulting"
 ---
 
 Enhance the conference experience with this comprehensive attendee app. Built with React Native for both iOS and Android, it works offline and provides real-time updates throughout the event.

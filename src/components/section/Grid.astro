@@ -1,10 +1,12 @@
 ---
 import FeatherIcon from '../ui/FeatherIcon.astro';
+import ServiceIcon from '../ui/ServiceIcon';
 
 interface GridItem {
   title: string;
   description?: string;
   href: string;
+  'service-icon'?: string;
 }
 
 interface Props {
@@ -24,6 +26,11 @@ const { id, title, items, background = '' } = Astro.props;
       {items.map((item) => (
         <a href={item.href} class="grid-card">
           <div class="card-inner">
+            {item['service-icon'] && (
+              <div class="card-icon">
+                <ServiceIcon name={item['service-icon']} size={32} />
+              </div>
+            )}
             <h3>{item.title}</h3>
             {item.description && <p class="card-description">{item.description}</p>}
             <span class="card-arrow">
@@ -46,9 +53,9 @@ const { id, title, items, background = '' } = Astro.props;
   .grid-card {
     display: block;
     background: white;
-    border-radius: var(--border-radius, 8px);
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid var(--card-border);
+    box-shadow: var(--card-shadow);
     text-decoration: none;
     color: inherit;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -71,7 +78,7 @@ const { id, title, items, background = '' } = Astro.props;
 
   .grid-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--hover-shadow);
     border-color: var(--primary);
   }
 
@@ -87,13 +94,18 @@ const { id, title, items, background = '' } = Astro.props;
     position: relative;
   }
 
+  .card-icon {
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+
   .card-title {
     margin-bottom: 0.75rem;
   }
 
   .card-description {
     font-size: 0.95rem;
-    color: #64748b;
+    color: var(--text-muted);
     line-height: 1.6;
     margin-bottom: auto;
     display: -webkit-box;

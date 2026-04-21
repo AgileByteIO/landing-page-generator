@@ -3,6 +3,7 @@ title: "Weather Dashboard"
 description: "Real-time weather tracking application with forecasts and interactive maps"
 pubDate: 2024-03-10
 author: "Mario"
+'domain-icon': "e-reading"
 ---
 
 A beautiful weather dashboard that displays real-time weather data with elegant visualizations and accurate forecasts. Built with modern web technologies for optimal performance across all devices.

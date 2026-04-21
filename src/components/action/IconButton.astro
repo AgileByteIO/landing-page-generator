@@ -15,7 +15,7 @@ interface Props {
 
 const {
   icon,
-  id = Math.random().toString(36).substr(2, 9),
+  id,
   iconSize = 20,
   style = 'default',
   type = 'button',
@@ -60,7 +60,7 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
     height: 2.75rem;
     padding: 0;
     border-radius: 50%;
-    border: var(--borderWidth) solid var(--primary);
+    border: var(--border-width) solid var(--primary);
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -94,6 +94,6 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
   }
 
   .icon-btn-ghost:hover {
-    background-color: rgba(37, 99, 235, 0.1);
+    background-color: rgba(var(--primary-rgb, 37, 99, 235), 0.1);
   }
 </style>

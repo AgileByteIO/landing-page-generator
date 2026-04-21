@@ -18,9 +18,9 @@ const FeatherIcon = (props: FeatherIconProps) => {
       viewBox="0 0 24 24"
       fill={props.fill || 'none'}
       stroke={props.stroke || 'currentColor'}
-      strokeWidth={props.strokeWidth || 2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      stroke-width={props.strokeWidth || 2}
+      stroke-linecap="round"
+      stroke-linejoin="round"
       class={props.className}
     >
       <Switch>

@@ -3,6 +3,7 @@ title: "Social Media Dashboard"
 description: "Manage all social media accounts in one place with advanced analytics and scheduling"
 pubDate: 2024-03-25
 author: "Mario"
+'service-icon': "software-development"
 ---
 
 A unified dashboard for managing multiple social media accounts from a single interface. Streamline your social media workflow with powerful scheduling, analytics, and collaboration tools.

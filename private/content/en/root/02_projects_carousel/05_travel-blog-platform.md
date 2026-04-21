@@ -3,6 +3,7 @@ title: "Travel Blog Platform"
 description: "Blog platform for travel enthusiasts with rich media and maps"
 pubDate: 2024-07-20
 author: "Mario"
+'domain-icon': "gaming"
 ---
 
 A beautiful platform for sharing travel experiences. Built with modern web technologies, it offers an immersive storytelling experience with support for photos, videos, maps, and interactive content.

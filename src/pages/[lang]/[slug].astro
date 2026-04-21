@@ -1,5 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from "astro:content";
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+
 import Layout from "../../layouts/Layout.astro";
 import Article from "../../components/page/Article.astro";
 import IconButton from "../../components/action/IconButton.astro";
@@ -7,7 +9,7 @@ import IconButton from "../../components/action/IconButton.astro";
 export const prerender = true;
 
 type PathParams = { lang: string; slug: string };
-type PathProps = { post: CollectionEntry<"landingpage">; Content: unknown };
+type PathProps = { post: CollectionEntry<"landingpage">; Content: AstroComponentFactory };
 
 export async function getStaticPaths() {
   const posts = await getCollection("landingpage");
@@ -17,7 +19,7 @@ export async function getStaticPaths() {
   for (const post of posts) {
     const parts = post.id.split("/");
     
-    if (parts.length === 3 && (parts[1] === "documents" || parts[1] === "cookie-consents")) {
+    if (parts.length === 3 && (parts[1] === "documents")) {
       const [lang, folderName, fileName] = parts;
       const fileNameNoExt = fileName.replace(/\.md$/, "");
       const slugParts = fileNameNoExt.split("_");
@@ -38,6 +40,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
+const { lang } = Astro.params;
 const { post, Content: PostContent } = Astro.props as PathProps;
 ---
 
@@ -45,7 +48,7 @@ const { post, Content: PostContent } = Astro.props as PathProps;
   <div class="x-header">
     <div class="x-header-gradient"></div>
     <div class="x-header-content">
-      <IconButton icon="arrow-left" style="outline" href="/en" type="link"/>
+      <IconButton icon="arrow-left" style="outline" href={`/${lang}`} type="link"/>
     </div>
   </div>
   <Article post={post}>

@@ -6,7 +6,7 @@ import SectionSwitcher from '../../components/section/SectionSwitcher.astro';
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const supportedLanguages = ['en'];
+  const supportedLanguages = ['en', 'de'];
   
   return supportedLanguages.map(lang => ({
     params: { lang },
@@ -25,8 +25,7 @@ const langContent = allContent.filter(post => post.id.startsWith(`${lang}/root/`
 
 const mainSubfolders = [...new Set(
   langContent.map(post => {
-    const folderPart = post.id.split('/')[1] + '/' + post.id.split('/')[2];
-    return folderPart;
+    return `${post.id.split('/')[2]}`;
   })
 )];
 
@@ -38,12 +37,13 @@ interface SectionData {
 }
 
 const sections: SectionData[] = mainSubfolders.map(folder => {
-  const folderParts = folder.split('/')[1].split('_');
+  console.info('folder %s', folder);
+  const folderWithoutLang = folder.split('/')[1] || folder;
+  const folderParts = folderWithoutLang.split('_');
   const order = parseInt(folderParts[0], 10);
-  const componentMatch = folderParts[folderParts.length - 1].match(/^(hero|carousel|grid)$/);
-  const component = componentMatch ? componentMatch[0] as 'hero' | 'carousel' | 'grid' : 'carousel';
-  const sectionName = folderParts.slice(1, -1).join(' ').replace(/([A-Z])/g, ' $1').trim();
-  const title = sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
+  const title = folderParts[1].replace('-', ' ').trim(); 
+  const component =  folderParts[2] as 'hero' | 'carousel' | 'grid'; 
+ 
   
   return {
     folder,

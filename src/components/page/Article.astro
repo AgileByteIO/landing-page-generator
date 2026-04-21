@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import TagBatch from '../ui/TagBatch.astro';
 
 interface Props {
   post: CollectionEntry<'landingpage'>;
@@ -11,6 +12,11 @@ const { post } = Astro.props;
 <article class="article">
   <header class="article-head">
     <h1 class="article-title">{post.data.title}</h1>
+    {post.data.tags && post.data.tags.length > 0 && (
+      <div class="article-tags">
+        <TagBatch tagIds={post.data.tags} />
+      </div>
+    )}
     {
       post.data.description && (
         <p class="article-summary">{post.data.description}</p>
@@ -47,6 +53,10 @@ const { post } = Astro.props;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-tags {
     margin-bottom: 1rem;
   }
 
@@ -128,12 +138,12 @@ const { post } = Astro.props;
   .article-content :global(td) {
     padding: 0.75rem 1rem;
     text-align: left;
-    border: 1px solid var(--primary);
+    border-bottom: 1px solid rgb(from var(--primary) r g b / 0.75);
   }
 
   .article-content :global(th) {
-    background: var(--primary);
-    color: var(--background);
+    color: var(--primary);
+    border-bottom: 1px solid var(--accent);
     font-weight: 600;
   }
 
@@ -147,7 +157,7 @@ const { post } = Astro.props;
 
   .article-content :global(hr) {
     border: none;
-    border-top: 1px solid --var(--background);
+    border-top: 1px solid var(--background);
     margin: 2rem 0;
   }
 

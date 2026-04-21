@@ -3,6 +3,7 @@ title: "Fitness Tracker"
 description: "Health and fitness tracking application with GPS and analytics"
 pubDate: 2024-05-12
 author: "Mario"
+'domain-icon': "health"
 ---
 
 A comprehensive fitness tracking application that helps users monitor their health goals. Built with React Native for cross-platform mobile support, it works seamlessly on both iOS and Android devices.

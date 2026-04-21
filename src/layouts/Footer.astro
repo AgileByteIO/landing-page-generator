@@ -19,31 +19,30 @@ const currentPath = Astro.url.pathname;
 const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
 const lang = langMatch ? langMatch[1] : 'en';
 
-const cookiePolicyText = tWithLang(lang, 'footer.cookie_policy');
-const copyrightSuffix = tWithLang(lang, 'footer.copyright_suffix');
 const vatPrefix = tWithLang(lang, 'footer.vat_prefix');
+const cookiePolicyText = tWithLang(lang, 'footer.cookie_policy');
 const currentYear = new Date().getFullYear();
 const copyrightText = tWithLang(lang, 'dynamic.copyright', currentYear, companyName);
 
 const allContent = await getCollection('landingpage');
 
 const documents: DocItem[] = allContent
-  .filter(post => post.id.startsWith('en/documents/'))
+  .filter(post => post.id.startsWith(`${lang}/documents/`))
   .map(post => {
     const parts = post.id.split('/');
-    const fileNameWithPrefix = parts[2].replace(/\.md$/, '');
+    const fileNameWithPrefix = parts[parts.length - 1].replace(/\.md$/, '');
     const slugParts = fileNameWithPrefix.split("_");
     const slug = slugParts.slice(1).join("-");
     return {
       title: post.data.title,
-      href: `/${parts[0]}/${slug}`
+      href: `/${lang}/${slug}`
     };
   });
 ---
 
 <footer class="footer">
   <div class="footer-container">
-    {documents.length > 0 && (
+{documents.length > 0 && (
       <nav class="footer-nav">
         {documents.map(doc => (
           <a href={doc.href} class="footer-link">{doc.title}</a>

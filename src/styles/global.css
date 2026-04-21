@@ -72,14 +72,18 @@ section {
 
 /* Headings */
 h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
+  font-family: var(--header-font), system-ui, sans-serif;
   font-weight: 700;
   line-height: 1.2;
+  letter-spacing: 0.1rem;
   color: var(--secondary);
+  text-transform: capitalize;
 }
 
 h1, .h1 {
   font-size: clamp(1.44rem, 3.24vw, 2.43rem);
   font-weight: 800;
+  letter-spacing: 0.15rem;
 }
 
 h2, .h2 {

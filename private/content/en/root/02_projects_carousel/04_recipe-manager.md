@@ -3,6 +3,7 @@ title: "Recipe Manager"
 description: "Personal recipe collection and meal planner with nutritional information"
 pubDate: 2024-06-08
 author: "Mario"
+'domain-icon': "e-reading"
 ---
 
 Organize your favorite recipes and plan your meals effortlessly. This comprehensive app combines a recipe database, meal planning, shopping lists, and nutritional tracking in one seamless experience.

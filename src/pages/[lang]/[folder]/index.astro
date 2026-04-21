@@ -1,13 +1,16 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry, render } from "astro:content";
 import Layout from "../../../layouts/Layout.astro";
-import Feed from "../../../components/section/Feed.astro";
+import Feed from "../../../components/page/Feed.astro";
+import TagBatch from "../../../components/ui/TagBatch.astro";
 import IconButton from "../../../components/action/IconButton.astro";
 
 export const prerender = true;
 
 type PathParams = { lang: string; folder: string };
-type PathProps = { title: string; folder: string; items: { title: string; description?: string; href: string }[] };
+type FeedProps = { title: string; folder: string; type: 'feed'; items: { title: string; description?: string; href: string }[] };
+type ArticleData = { title: string; folder: string; type: 'article'; post: CollectionEntry<'landingpage'> };
+type PathProps = FeedProps | ArticleData;
 
 export async function getStaticPaths() {
   const posts = await getCollection("landingpage");
@@ -32,13 +35,10 @@ export async function getStaticPaths() {
   const paths: { params: PathParams; props: PathProps }[] = [];
 
   for (const [folderKey, folderPosts] of folderGroups) {
-    // Skip single article folders
-    if (folderPosts.length <= 1) continue;
-
     const lang = folderKey.split("/")[0];
     let folderSlug: string;
     let folderTitle: string;
-    
+
     {
       const folderParts = folderKey.split("/")[2].split("_");
       folderSlug = folderParts.slice(1, -1).join("-");
@@ -46,38 +46,73 @@ export async function getStaticPaths() {
       folderTitle = folderTitle.charAt(0).toUpperCase() + folderTitle.slice(1);
     }
 
-    const items = folderPosts.map((post) => {
-      const idParts = post.id.split("/");
-      const fileNameWithPrefix = idParts[3]?.replace(/\.md$/, "") || "";
-      const itemSlug = fileNameWithPrefix.replace(/^\d+_/, "");
-      return {
-        title: post.data.title,
-        description: post.data.description,
-        href: `/${lang}/${folderSlug}/${itemSlug}`,
-      };
-    });
+    if (folderPosts.length === 1) {
+      const post = folderPosts[0];
+      paths.push({
+        params: { lang, folder: folderSlug },
+        props: { title: post.data.title || folderTitle, folder: folderSlug, type: 'article', post },
+      });
+    } else {
+      const items = folderPosts.map((post) => {
+        const idParts = post.id.split("/");
+        const fileNameWithPrefix = idParts[3]?.replace(/\.md$/, "") || "";
+        const itemSlug = fileNameWithPrefix.replace(/^\d+_/, "");
+        return {
+          title: post.data.title,
+          description: post.data.description,
+          href: `/${lang}/${folderSlug}/${itemSlug}`,
+        };
+      });
 
-    paths.push({
-      params: { lang, folder: folderSlug },
-      props: { title: folderTitle, folder: folderSlug, items },
-    });
+      paths.push({
+        params: { lang, folder: folderSlug },
+        props: { title: folderTitle, folder: folderSlug, type: 'feed', items },
+      });
+    }
   }
 
   return paths;
 }
 
 const { lang, folder } = Astro.params as PathParams;
-const { title, items } = Astro.props as PathProps;
+const props = Astro.props as PathProps;
+
+let Content: any;
+if (props.type === 'article') {
+  const articleProps = props as ArticleData;
+  const rendered = await render(articleProps.post);
+  Content = rendered.Content;
+}
 ---
 
-<Layout title={title} description="">
+<Layout title={props.title} description="">
   <div class="x-header">
     <div class="x-header-gradient"></div>
     <div class="x-header-content">
       <IconButton icon="arrow-left" style="outline" href={`/${lang}`} type="link" />
     </div>
   </div>
-  <Feed title={title} items={items} />
+
+  {props.type === 'feed' && <Feed title={props.title} items={(props as FeedProps).items} />}
+
+  {props.type === 'article' && Content && (
+    <article class="article">
+      <header class="article-head">
+        <h1 class="article-title">{(props as ArticleData).post.data.title}</h1>
+        {(props as ArticleData).post.data.tags && (props as ArticleData).post.data.tags.length > 0 && (
+          <div class="article-tags">
+            <TagBatch tagIds={(props as ArticleData).post.data.tags} />
+          </div>
+        )}
+        {(props as ArticleData).post.data.description && (
+          <p class="article-summary">{(props as ArticleData).post.data.description}</p>
+        )}
+      </header>
+      <div class="article-content">
+        <Content />
+      </div>
+    </article>
+  )}
 </Layout>
 
 <style>
@@ -112,6 +147,99 @@ const { title, items } = Astro.props as PathProps;
     color: var(--secondary);
   }
 
+  .article {
+    width: 100%;
+    max-width: 85rem;
+    margin: 0 auto;
+  }
+
+  .article-head {
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+  }
+
+  .article-content {
+    padding: 0 2rem;
+  }
+
+  .article-title {
+    background: linear-gradient(
+      135deg,
+      var(--secondary) 0%,
+      var(--primary) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-tags {
+    margin-bottom: 1rem;
+  }
+
+  .article-summary {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    max-width: 65ch;
+  }
+
+  .article-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 1rem;
+    padding: 0 0 0 1.5rem;
+  }
+
+  .article-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .article-content :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  .article-content :global(code) {
+    background: var(--foreground);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .article-content :global(pre) {
+    background: var(--primary);
+    color: var(--background);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
   @media (max-width: 640px) {
     .x-header {
       min-height: 15vh;
@@ -121,6 +249,13 @@ const { title, items } = Astro.props as PathProps;
     }
     .x-header-title {
       font-size: 1.5rem;
+    }
+    .article-head,
+    .article-content {
+      padding: 0 1rem;
+    }
+    .article {
+      margin: 0;
     }
   }
 </style>

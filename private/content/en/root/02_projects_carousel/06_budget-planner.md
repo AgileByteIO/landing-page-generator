@@ -3,6 +3,7 @@ title: "Budget Planner"
 description: "Personal finance and budgeting tool with expense tracking and reports"
 pubDate: 2024-08-15
 author: "Mario"
+'domain-icon': "logistic"
 ---
 
 Take control of your finances with this intuitive budgeting tool. Track expenses, set goals, visualize spending patterns, and make informed financial decisions.

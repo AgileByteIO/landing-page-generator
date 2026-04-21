@@ -141,13 +141,12 @@ const iconName = isMailto ? 'mail' : 'arrow-right';
 
   .hero-description-text {
     display: inline-block;
-    color: rgba(var(--foreground-rgb, 100, 116, 139), 0.85);
-    filter: blur(0.3px);
+    color: var(--text-muted);
     transition: filter 0.3s ease;
   }
 
   .hero:hover .hero-description-text {
-    filter: blur(0);
+    filter: none;
   }
 
   @keyframes fadeIn {

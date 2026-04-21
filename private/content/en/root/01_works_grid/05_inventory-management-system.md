@@ -3,6 +3,7 @@ title: "Inventory Management System"
 description: "Warehouse and inventory control system with real-time tracking and automation"
 pubDate: 2024-05-30
 author: "Mario"
+'service-icon': "containerisation"
 ---
 
 Streamline your warehouse operations with this comprehensive inventory management system. Designed for businesses of all sizes, from small warehouses to massive distribution centers handling millions of SKUs.

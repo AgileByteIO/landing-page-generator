@@ -1,73 +1,85 @@
 ---
 import { getCollection } from 'astro:content';
 import Hero from './Hero.astro';
-import Carousel from './Carousel';
+import Carousel from './Carousel.tsx';
 import Grid from './Grid.astro';
+import Marquee from './Marquee.tsx';
 
 interface Props {
   lang: string;
   path: string;
-  component?: 'hero' | 'carousel' | 'grid';
+  component?: 'hero' | 'carousel' | 'grid' | 'marquee';
   showTitle?: string;
 }
 
 const { lang, path, component, showTitle } = Astro.props;
 
 const allPosts = await getCollection('landingpage');
-const normalizedFolder = path.replace(/^\//, '').replace(/\/$/, '');
+
+const targetPath = path.replace(/^\//, '').replace(/\/$/, '');
 
 const filteredPosts = allPosts.filter((post) => {
-  return post.id.startsWith(normalizedFolder) && post.id !== normalizedFolder;
+  const postId = post.id;
+  return postId.startsWith(targetPath + '/') && postId !== targetPath;
 });
 
 const items = filteredPosts.map((post) => {
-  const postParts = post.id.split('/');
-  const rootFolder = postParts[1];
-  const folderName = postParts[2];
-  const fileNameWithPrefix = postParts[3]?.replace(/\.md$/, '') || '';
+  const postId = post.id;
+  const parts = postId.split('/');
+  const folderName = parts[2] || '';
+  const fileNameWithPrefix = parts[3]?.replace(/\.md$/, '') || '';
   const fileName = fileNameWithPrefix.replace(/^\d+_/, '');
   const folderParts = folderName.split('_');
   const sectionName = folderParts.slice(1, -1).join('-');
-  
-  const basePath = rootFolder === 'root' ? '' : `/${rootFolder}`;
-  const href = `/${lang}/${sectionName}/${fileName}`;
-  
+
+  const extractedLang = parts[0] || lang;
+  const href = `/${extractedLang}/${sectionName}/${fileName}`;
+
   return {
     title: post.data.title,
     description: post.data.description || '',
-    author: post.data.author || '',
-    link: post.data.link || '',
     href,
+    'service-icon': post.data['service-icon'],
+    'domain-icon': post.data['domain-icon'],
   };
 });
 
 const useComponent = component || (items.length === 1 ? 'hero' : 'carousel');
 
 const pathParts = path.replace(/^\//, '').replace(/\/$/, '').split('/');
-const folderParts = pathParts[2]?.split('_') || [];
+const folderParts = pathParts[1]?.split('_') || [];
 const sectionName = folderParts.slice(1, -1).join('-');
-const indexHref = `/${lang}/${sectionName}`;
+const extractedLang = pathParts[0] || lang;
+const indexHref = `/${extractedLang}/${sectionName}`;
 
-const isHeroFolder = normalizedFolder.includes('00_about_hero');
+const isHeroFolder = targetPath.includes('about');
+const heroLink = isHeroFolder ? (items[0]?.href || indexHref) : (items.length === 1 ? indexHref : items[0]?.href || '');
 
-const heroLink = isHeroFolder ? items[0].link : (items.length === 1 ? indexHref : items[0]?.href);
+const marqueeItems = items.map(item => ({
+  text: item.title,
+  link: item.href,
+  'service-icon': item['service-icon']
+}));
 ---
 
-{items.length === 0 && <p>No content found</p>}
+{items.length === 0 && <p>No content found for {targetPath}</p>}
 
 {(useComponent === 'hero' || items.length === 1) && items.length > 0 && (
   <Hero 
     title={items[0].title} 
     description={items[0].description} 
-    author={items[0].author} 
     link={heroLink} 
   />
 )}
 
 {useComponent === 'carousel' && items.length > 1 && (
-  <Carousel client:load items={items} title={showTitle} />
+  <Carousel client:load items={items} title={showTitle} lang={lang} />
 )}
 
 {useComponent === 'grid' && items.length > 1 && (
   <Grid items={items} title={showTitle} />
+)}
+
+{useComponent === 'marquee' && marqueeItems.length > 0 && (
+  <Marquee items={marqueeItems} speed={25} />
 )}

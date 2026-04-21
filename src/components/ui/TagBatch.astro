@@ -1,0 +1,54 @@
+---
+import Tag from './Tag.astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  tagIds: string[];
+  variant?: 'default' | 'outline';
+}
+
+const { tagIds, variant = 'default' } = Astro.props;
+
+let tagMap = new Map<string, { name: string; description?: string }>();
+
+try {
+  const allTags = await getCollection('tags');
+  console.log('All tags loaded:', allTags.length);
+  allTags.forEach((tag) => {
+    const tagName = tag.id.replace(/\.md$/, '').split('/').pop() || tag.id.replace(/\.md$/, '');
+    console.log('Tag:', tagName, 'data:', tag.data);
+    tagMap.set(tagName, { name: tag.data.name || tagName, description: tag.data.description });
+  });
+  console.log('Tag IDs requested:', tagIds);
+  console.log('Tags found:', tagIds.map(id => tagMap.get(id)));
+} catch (e) {
+  console.warn('Could not load tags collection:', e);
+}
+
+const tags = tagIds.map((id) => {
+  const tagData = tagMap.get(id);
+  return {
+    name: tagData?.name || id.charAt(0).toUpperCase() + id.slice(1),
+    description: tagData?.description
+  };
+});
+---
+
+<span class="tag-batch">
+  {tags.map((tag) => (
+    <Tag
+      name={tag.name}
+      description={tag.description}
+      variant={variant}
+    />
+  ))}
+</span>
+
+<style>
+  .tag-batch {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+</style>

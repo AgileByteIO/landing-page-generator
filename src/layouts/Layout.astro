@@ -23,17 +23,30 @@ const currentPath = Astro.url.pathname;
 const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
 const currentLang = langMatch ? langMatch[1] : null;
 
+const allContent = await getCollection('landingpage');
+const langFolders = allContent
+  .filter(post => post.id.startsWith(`${currentLang}/root/`) && post.id.includes('_'))
+  .map(post => {
+    const parts = post.id.split('/');
+    const folderName = parts[2];
+    const folderParts = folderName.split('_');
+    const sectionName = folderParts.slice(1, -1).join('-');
+    return {
+      label: sectionName.replace(/-/g, ' '),
+      href: `/${currentLang}/${sectionName}`
+    };
+  });
+
+const uniqueSections = [...new Map(langFolders.map(item => [item.href, item])).values()];
 const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'About', href: '/about' },
+  ...uniqueSections,
 ];
 
 const cookieConsents = await getCollection('landingpage');
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={currentLang || 'en'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -42,8 +55,8 @@ const cookieConsents = await getCollection('landingpage');
     <title>{title}</title>
   </head>
   <body>
-    <Header logo={company.brandName} navItems={navItems} showLangSwitcher={!!currentLang}>
-      <LangSwitcher client:load supportedLanguages={['en', 'de']} slot="lang-switcher" />
+    <Header logo={company.brandName} navItems={navItems} showLangSwitcher={!!currentLang} supportedLanguages={company.supportedLanguages}>
+      <LangSwitcher client:load supportedLanguages={company.supportedLanguages} slot="lang-switcher" />
     </Header>
 
     <main>
@@ -63,7 +76,13 @@ const cookieConsents = await getCollection('landingpage');
   backgroundColor: theme.backgroundColor, 
   borderWidth: theme.borderWidth, 
   borderRadius: theme.borderRadius, 
-  boxShadow: theme.boxShadow 
+  boxShadow: theme.boxShadow,
+  headerFont: theme.headerFont,
+  textFont: theme.textFont,
+  hoverShadow: theme.hoverShadow,
+  cardShadow: theme.cardShadow,
+  cardBorder: theme.cardBorder,
+  textMuted: theme.textMuted
 }}>
   :root {
     --primary: var(--primaryColor);
@@ -73,17 +92,47 @@ const cookieConsents = await getCollection('landingpage');
     --border-width: var(--borderWidth);
     --border-radius: var(--borderRadius);
     --box-shadow: var(--boxShadow);
+    --header-font: var(--headerFont);
+    --text-font: var(--textFont);
+    --hover-shadow: var(--hoverShadow);
+    --card-shadow: var(--cardShadow);
+    --card-border: var(--cardBorder);
+    --text-muted: var(--textMuted);
+  }
+
+  @font-face {
+    font-family: 'bebasNeue';
+    src: url('/fonts/bebasNeue/BebasNeue-Regular.woff2') format('woff2'),
+         url('/fonts/bebasNeue/BebasNeue-Regular.woff') format('woff'),
+         url('/fonts/bebasNeue/BebasNeue-Regular.ttf') format('truetype'),
+         url('/fonts/bebasNeue/BebasNeue-Regular.eot') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'nunito';
+    src: url('/fonts/nunito/Nunito-Regular.woff2') format('woff2'),
+         url('/fonts/nunito/Nunito-Regular.woff') format('woff'),
+         url('/fonts/nunito/Nunito-Regular.ttf') format('truetype'),
+         url('/fonts/nunito/Nunito-Regular.eot') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
   }
 
   body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: var(--text-font), system-ui, sans-serif;
   }
 
   main {
-    flex: 1;
+    display: block;
     width: 100%;
+    align-items: center;
   }
 
   .grid {

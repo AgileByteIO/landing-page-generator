@@ -28,7 +28,7 @@ export default function CookieConsent(props: Props) {
   const [isLoaded, setIsLoaded] = createSignal(false);
 
   const cookieItems: CookieConsent[] = props.cookies
-    .filter((c) => c.id.includes('/cookie-consents/'))
+    .filter((c) => c.id.startsWith(`${lang}/cookie-consents/`))
     .map((c) => ({
       id: c.id,
       title: c.data.title,

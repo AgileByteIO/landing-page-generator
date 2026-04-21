@@ -1,13 +1,12 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
 
 const contentPath = process.env.CONTENT_PATH ?? './private/content';
 
 const landingpage = defineCollection({
-  loader: glob({ 
-    base: contentPath, 
-    pattern: '**/*.md'
+  loader: glob({
+    base: contentPath,
+    pattern: '**/{root,documents,cookie-consents}/**/*.md'
   }),
   schema: z.object({
     title: z.string(),
@@ -16,7 +15,21 @@ const landingpage = defineCollection({
     author: z.string().default('Anonymous'),
     link: z.string().optional(),
     mandatory: z.boolean().optional(),
+    tags: z.array(z.string()).optional(),
+    'service-icon': z.string().optional(),
+    'domain-icon': z.string().optional(),
   }),
 });
 
-export const collections = { landingpage };
+const tags = defineCollection({
+  loader: glob({
+    base: contentPath,
+    pattern: '**/tags/*.md'
+  }),
+  schema: z.object({
+    name: z.string(),
+    description: z.string().optional(),
+  }),
+});
+
+export const collections = { landingpage, tags };
