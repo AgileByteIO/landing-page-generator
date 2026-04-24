@@ -1,15 +1,16 @@
 ---
-import { getCollection, render, type CollectionEntry } from "astro:content";
-import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import { getCollection, type CollectionEntry } from "astro:content";
 
 import Layout from "../../layouts/Layout.astro";
 import Article from "../../components/page/Article.astro";
-import IconButton from "../../components/action/IconButton.astro";
+import BackButtonHeader from "../../layouts/BackButtonHeader.astro";
 
 export const prerender = true;
 
 type PathParams = { lang: string; slug: string };
-type PathProps = { post: CollectionEntry<"landingpage">; Content: AstroComponentFactory };
+type PathProps = {
+  post: CollectionEntry<"landingpage">;
+};
 
 export async function getStaticPaths() {
   const posts = await getCollection("landingpage");
@@ -18,20 +19,17 @@ export async function getStaticPaths() {
 
   for (const post of posts) {
     const parts = post.id.split("/");
-    
-    if (parts.length === 3 && (parts[1] === "documents")) {
+
+    if (parts.length === 3 && parts[1] === "documents") {
       const [lang, folderName, fileName] = parts;
       const fileNameNoExt = fileName.replace(/\.md$/, "");
       const slugParts = fileNameNoExt.split("_");
       const slug = slugParts.slice(1).join("-");
-      
-      const { Content: PostContent } = await render(post);
-      
+
       paths.push({
         params: { lang, slug },
-        props: { 
+        props: {
           post,
-          Content: PostContent,
         },
       });
     }
@@ -41,53 +39,10 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
-const { post, Content: PostContent } = Astro.props as PathProps;
+const { post } = Astro.props as PathProps;
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-  <div class="x-header">
-    <div class="x-header-gradient"></div>
-    <div class="x-header-content">
-      <IconButton icon="arrow-left" style="outline" href={`/${lang}`} type="link"/>
-    </div>
-  </div>
-  <Article post={post}>
-    <PostContent />
-  </Article>
+  <BackButtonHeader href={`/${lang}`} />
+  <Article post={post} />
 </Layout>
-
-<style>
-  .x-header {
-    position: relative;
-    min-height: 20vh;
-    display: flex;
-    align-items: flex-end;
-    margin-bottom: 2rem;
-  }
-
-  .x-header-gradient {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(135deg, var(--background) 0%, transparent 40%),
-      linear-gradient(225deg, var(--primary) 0%, transparent 50%),
-      linear-gradient(45deg, var(--accent) 0%, transparent 40%);
-    background-color: var(--background);
-    opacity: 0.85;
-  }
-
-  .x-header-content {
-    position: relative;
-    bottom: -1rem;
-    left: 1.25rem;
-  }
-
-  @media (max-width: 640px) {
-    .x-header {
-      min-height: 15vh;
-    }
-    .x-header-content {
-       padding: 0.25rem 0.125rem;
-    }
-  }
-</style>

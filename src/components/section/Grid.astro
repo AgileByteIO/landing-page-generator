@@ -34,7 +34,7 @@ const { id, title, items, background = '' } = Astro.props;
             <h3>{item.title}</h3>
             {item.description && <p class="card-description">{item.description}</p>}
             <span class="card-arrow">
-              <FeatherIcon name="arrow-right" size="20" />
+              <FeatherIcon name="arrow-right" size={20} />
             </span>
           </div>
         </a>
@@ -52,7 +52,7 @@ const { id, title, items, background = '' } = Astro.props;
 
   .grid-card {
     display: block;
-    background: white;
+    background: var(--background)
     border-radius: var(--border-radius);
     border: var(--border-width) solid var(--card-border);
     box-shadow: var(--card-shadow);

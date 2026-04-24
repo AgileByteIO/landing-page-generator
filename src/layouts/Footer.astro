@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import { tWithLang } from '../lib/i18n';
+import { loadEnv } from '../lib/loadEnv';
+import SocialBar from '../components/action/SocialBar.astro';
 
 interface DocItem {
   title: string;
@@ -14,6 +16,8 @@ interface Props {
 }
 
 const { companyName = 'Company Name', legalAddress = '', vatNo = '' } = Astro.props;
+
+const { company } = loadEnv();
 
 const currentPath = Astro.url.pathname;
 const langMatch = currentPath.match(/^\/([a-z]{2})(\/|$)/);
@@ -42,7 +46,8 @@ const documents: DocItem[] = allContent
 
 <footer class="footer">
   <div class="footer-container">
-{documents.length > 0 && (
+    <SocialBar socials={company.socials} color='white' />
+    {documents.length > 0 && (
       <nav class="footer-nav">
         {documents.map(doc => (
           <a href={doc.href} class="footer-link">{doc.title}</a>

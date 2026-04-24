@@ -1,11 +1,8 @@
 ---
-import FeatherIcon from '../ui/FeatherIcon.astro';
 
 interface Props {
-  icon: string;
   id?: string;
-  iconSize?: number;
-  style?: 'default' | 'outline' | 'ghost';
+  style?: 'default' | 'outline' | 'ghost' | 'ghost-current';
   type?: 'button' | 'link';
   href?: string;
   onClick?: string;
@@ -14,9 +11,7 @@ interface Props {
 }
 
 const {
-  icon,
   id,
-  iconSize = 20,
   style = 'default',
   type = 'button',
   href = '#',
@@ -37,7 +32,7 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
     class:list={['icon-btn', `icon-btn-${style}`, className]}
     aria-label={ariaLabel}
   >
-    <FeatherIcon name={icon} size={iconSize} />
+    <slot />
   </a>
 ) : (
   <button
@@ -47,7 +42,7 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
     class:list={['icon-btn', `icon-btn-${style}`, className]}
     aria-label={ariaLabel}
   >
-    <FeatherIcon name={icon} size={iconSize} />
+     <slot />
   </button>
 )}
 
@@ -94,6 +89,16 @@ const borderWidth = import.meta.env.BORDER_WIDTH || '2px';
   }
 
   .icon-btn-ghost:hover {
+    background-color: rgba(var(--primary-rgb, 37, 99, 235), 0.1);
+  }
+
+  .icon-btn-ghost-current {
+    background-color: transparent;
+    color: currentColor;
+    border-color: transparent;
+  }
+
+  .icon-btn-ghost-current:hover {
     background-color: rgba(var(--primary-rgb, 37, 99, 235), 0.1);
   }
 </style>

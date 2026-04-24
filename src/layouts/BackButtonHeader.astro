@@ -1,0 +1,55 @@
+---
+import IconButton from "../components/action/IconButton.astro";
+import FeatherIcon from "../components/ui/FeatherIcon.astro";
+
+interface PathProps {
+    href: string;
+}
+
+const { href } = Astro.props as PathProps;
+---
+
+<div class="back-header">
+    <div class="back-header-gradient"></div>
+    <div class="back-header-content">
+        <IconButton style="outline" href={href} type="link">
+            <FeatherIcon name="arrow-left" size={20} />
+        </IconButton>
+    </div>
+</div>
+
+<style>
+    .back-header {
+        position: relative;
+        min-height: 20vh;
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 2rem;
+    }
+
+    .back-header-gradient {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(135deg, var(--background) 0%, transparent 40%),
+            linear-gradient(225deg, var(--primary) 0%, transparent 50%),
+            linear-gradient(45deg, var(--accent) 0%, transparent 40%);
+        background-color: var(--background);
+        opacity: 0.5;
+    }
+
+    .back-header-content {
+        position: relative;
+        bottom: -1rem;
+        left: 1.25rem;
+    }
+
+     @media (max-width: 640px) {
+    .back-header {
+      min-height: 15vh;
+    }
+    .back-header-content {
+      padding: 0.25rem 0.125rem;
+    }
+  }
+</style>

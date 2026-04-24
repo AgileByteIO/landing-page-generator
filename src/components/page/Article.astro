@@ -1,14 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import TagBatch from '../ui/TagBatch.astro';
+import { render } from 'astro:content';
 
 interface Props {
   post: CollectionEntry<'landingpage'>;
 }
 
 const { post } = Astro.props;
----
 
+const {Content:PostContent} = await render(post);
+---
 <article class="article">
   <header class="article-head">
     <h1 class="article-title">{post.data.title}</h1>
@@ -24,7 +26,7 @@ const { post } = Astro.props;
     }
   </header>
   <div class="article-content">
-    <slot />
+    <PostContent />
   </div>
 </article>
 

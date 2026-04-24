@@ -19,9 +19,12 @@ interface ThemeConfig {
 interface CompanyMetadata {
   brandName: string;
   companyName: string;
+  contactEmail: string;
   companyLegalAddress: string;
   companyVatNo: string;
+  defaultLanguage: string;
   supportedLanguages: string[];
+  socials: Record<string, string>;
 }
 
 interface Metadata {
@@ -48,12 +51,20 @@ export function loadEnv(): Metadata {
 
   const company: CompanyMetadata = {
     brandName: process.env.BRAND_NAME || 'AgileByte',
-    companyName: process.env.COMPANY_NAME || 'AgileByte Ltd.',
+    contactEmail: process.env.CONTACT_EMAIL || "shop@agilebyte.io",
+    companyName: process.env.COMPANY_NAME || 'AgileByte OÜ',
     companyLegalAddress: process.env.COMPANY_LEGAL_ADDRESS || '',
     companyVatNo: process.env.COMPANY_VAT_NO || '',
+    defaultLanguage: process.env.DEFAULT_LANGUAGE || 'en',
     supportedLanguages: process.env.SUPPORTED_LANGUAGES 
       ? process.env.SUPPORTED_LANGUAGES.split(',').map(l => l.trim())
       : ['en', 'de'],
+    socials: {
+      linkedin: process.env.SOCIAL_LINKEDIN || 'https://www.linkedin.com/in/mario-jan%C3%9Fen-82b35038',
+      github: process.env.SOCIAL_GITHUB || 'https://github.com/AgileByteIO',
+      pinterest: process.env.SOCIAL_PINTEREST || 'https://de.pinterest.com/PRB2075/',
+      mastodon: process.env.SOCIAL_MASTODON || 'https://defcon.social/@pixel',
+    },
   };
 
   return { theme, company };
